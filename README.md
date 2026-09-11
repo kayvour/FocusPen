@@ -1,0 +1,3 @@
+FocusPen is a low-cost smart pen prototype designed to recognize pen-interaction behaviours in real time. The current prototype uses a 6-axis MPU6050 IMU and a Temporal Convolutional Network (TCN) to classify Writing, Fidgeting, Idle, and Gripping states. A control layer uses the predictions to trigger context-aware haptic feedback through a DRV2605L and LRA actuator.
+
+The repository currently contains the initial IMU-based behaviour classification prototype, including signal preprocessing, temporal windowing, TCN training, Random Forest baseline comparison, held-out stream simulation, and haptic-control logic.
