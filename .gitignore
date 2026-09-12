@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+env/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Local data and generated artifacts
+pen.csv
+*.csv
+*.pkl
+*.pt
+*.pth
+*.joblib
+
+# Local tooling
+.vscode/
+.DS_Store
+Thumbs.db
