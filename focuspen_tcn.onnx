@@ -1,0 +1,943 @@
+
+pytorch
+2.11.0+cpu:§Â
+¢
+input
+tcn.0.net.0.conv.weight
+tcn.0.net.0.conv.biasconv1dnode_conv1d"Conv*
+group†*
+pads@@†*
+auto_pad"NOTSET†*
+strides@†*
+	dilations@†*
+kernel_shape@†Jˇ
+	namespaceÒ: __main__.TCN/tcn: torch.nn.modules.container.Sequential/tcn.0: __main__.TCNBlock/tcn.0.net: torch.nn.modules.container.Sequential/tcn.0.net.0: __main__.CausalConv1d/tcn.0.net.0.conv: torch.nn.modules.conv.Conv1d/conv1d: aten.conv1d.defaultJÍ
+pkg.torch.onnx.class_hierarchy«['__main__.TCN', 'torch.nn.modules.container.Sequential', '__main__.TCNBlock', 'torch.nn.modules.container.Sequential', '__main__.CausalConv1d', 'torch.nn.modules.conv.Conv1d', 'aten.conv1d.default']J¬
+pkg.torch.onnx.fx_nodeß%conv1d : [num_users=1] = call_function[target=torch.ops.aten.conv1d.default](args = (%x, %p_tcn_0_net_0_conv_weight, %p_tcn_0_net_0_conv_bias, [1], [2]), kwargs = {})Jl
+pkg.torch.onnx.name_scopesN['', 'tcn', 'tcn.0', 'tcn.0.net', 'tcn.0.net.0', 'tcn.0.net.0.conv', 'conv1d']J¿
+pkg.torch.onnx.stack_trace°File "/tmp/ipykernel_2809/3988316291.py", line 138, in forward
+    x = self.tcn(x)
+  File "/usr/local/lib/python3.13/dist-packages/torch/nn/modules/container.py", line 253, in forward
+    input = module(input)
+  File "/tmp/ipykernel_2809/3988316291.py", line 93, in forward
+    self.net(x) + self.skip(x)
+  File "/usr/local/lib/python3.13/dist-packages/torch/nn/modules/container.py", line 253, in forward
+    input = module(input)
+  File "/tmp/ipykernel_2809/3988316291.py", line 27, in forward
+    y = self.conv(x)
+  File "/usr/local/lib/python3.13/dist-packages/torch/nn/modules/conv.py", line 375, in forward
+    return self._conv_forward(input, self.weight, self.bias)
+Ì	
+conv1d
+val_14
+val_18
+val_22
+val_23slice_2node_slice_2"SliceJœ
+	namespace¡: __main__.TCN/tcn: torch.nn.modules.container.Sequential/tcn.0: __main__.TCNBlock/tcn.0.net: torch.nn.modules.container.Sequential/tcn.0.net.0: __main__.CausalConv1d/slice_2: aten.slice.TensorJ»
+pkg.torch.onnx.class_hierarchy•['__main__.TCN', 'torch.nn.modules.container.Sequential', '__main__.TCNBlock', 'torch.nn.modules.container.Sequential', '__main__.CausalConv1d', 'aten.slice.Tensor']Jê
+pkg.torch.onnx.fx_nodev%slice_2 : [num_users=1] = call_function[target=torch.ops.aten.slice.Tensor](args = (%slice_1, 2, 0, -2), kwargs = {})JY
+pkg.torch.onnx.name_scopes;['', 'tcn', 'tcn.0', 'tcn.0.net', 'tcn.0.net.0', 'slice_2']Jô
+pkg.torch.onnx.stack_trace˙File "/tmp/ipykernel_2809/3988316291.py", line 138, in forward
+    x = self.tcn(x)
+  File "/usr/local/lib/python3.13/dist-packages/torch/nn/modules/container.py", line 253, in forward
+    input = module(input)
+  File "/tmp/ipykernel_2809/3988316291.py", line 93, in forward
+    self.net(x) + self.skip(x)
+  File "/usr/local/lib/python3.13/dist-packages/torch/nn/modules/container.py", line 253, in forward
+    input = module(input)
+  File "/tmp/ipykernel_2809/3988316291.py", line 31, in forward
+    y = y[
+ï
+
+slice_2relu	node_relu"ReluJ◊
+	namespace…: __main__.TCN/tcn: torch.nn.modules.container.Sequential/tcn.0: __main__.TCNBlock/tcn.0.net: torch.nn.modules.container.Sequential/tcn.0.net.1: torch.nn.modules.activation.ReLU/relu: aten.relu.defaultJ”
+pkg.torch.onnx.class_hierarchy∞['__main__.TCN', 'torch.nn.modules.container.Sequential', '__main__.TCNBlock', 'torch.nn.modules.container.Sequential', 'torch.nn.modules.activation.ReLU', 'aten.relu.default']JÑ
+pkg.torch.onnx.fx_nodej%relu : [num_users=1] = call_function[target=torch.ops.aten.relu.default](args = (%slice_2,), kwargs = {})JV
+pkg.torch.onnx.name_scopes8['', 'tcn', 'tcn.0', 'tcn.0.net', 'tcn.0.net.1', 'relu']J„
+pkg.torch.onnx.stack_traceƒFile "/tmp/ipykernel_2809/3988316291.py", line 138, in forward
+    x = self.tcn(x)
+  File "/usr/local/lib/python3.13/dist-packages/torch/nn/modules/container.py", line 253, in forward
+    input = module(input)
+  File "/tmp/ipykernel_2809/3988316291.py", line 93, in forward
+    self.net(x) + self.skip(x)
+  File "/usr/local/lib/python3.13/dist-packages/torch/nn/modules/container.py", line 253, in forward
+    input = module(input)
+  File "/usr/local/lib/python3.13/dist-packages/torch/nn/modules/activation.py", line 143, in forward
+    return F.relu(input, inplace=self.inplace)
+Ø
+relu
+tcn.0.net.3.conv.weight
+tcn.0.net.3.conv.biasconv1d_1node_conv1d_1"Conv*
+group†*
+pads@@†*
+auto_pad"NOTSET†*
+strides@†*
+	dilations@†*
+kernel_shape@†JÅ
+	namespaceÛ: __main__.TCN/tcn: torch.nn.modules.container.Sequential/tcn.0: __main__.TCNBlock/tcn.0.net: torch.nn.modules.container.Sequential/tcn.0.net.3: __main__.CausalConv1d/tcn.0.net.3.conv: torch.nn.modules.conv.Conv1d/conv1d_1: aten.conv1d.defaultJÍ
+pkg.torch.onnx.class_hierarchy«['__main__.TCN', 'torch.nn.modules.container.Sequential', '__main__.TCNBlock', 'torch.nn.modules.container.Sequential', '__main__.CausalConv1d', 'torch.nn.modules.conv.Conv1d', 'aten.conv1d.default']J»
+pkg.torch.onnx.fx_node≠%conv1d_1 : [num_users=1] = call_function[target=torch.ops.aten.conv1d.default](args = (%clone, %p_tcn_0_net_3_conv_weight, %p_tcn_0_net_3_conv_bias, [1], [2]), kwargs = {})Jn
+pkg.torch.onnx.name_scopesP['', 'tcn', 'tcn.0', 'tcn.0.net', 'tcn.0.net.3', 'tcn.0.net.3.conv', 'conv1d_1']J¿
+pkg.torch.onnx.stack_trace°File "/tmp/ipykernel_2809/3988316291.py", line 138, in forward
+    x = self.tcn(x)
+  File "/usr/local/lib/python3.13/dist-packages/torch/nn/modules/container.py", line 253, in forward
+    input = module(input)
+  File "/tmp/ipykernel_2809/3988316291.py", line 93, in forward
+    self.net(x) + self.skip(x)
+  File "/usr/local/lib/python3.13/dist-packages/torch/nn/modules/container.py", line 253, in forward
+    input = module(input)
+  File "/tmp/ipykernel_2809/3988316291.py", line 27, in forward
+    y = self.conv(x)
+  File "/usr/local/lib/python3.13/dist-packages/torch/nn/modules/conv.py", line 375, in forward
+    return self._conv_forward(input, self.weight, self.bias)
+Ô	
+conv1d_1
+val_14
+val_18
+val_22
+val_23slice_4node_slice_4"SliceJœ
+	namespace¡: __main__.TCN/tcn: torch.nn.modules.container.Sequential/tcn.0: __main__.TCNBlock/tcn.0.net: torch.nn.modules.container.Sequential/tcn.0.net.3: __main__.CausalConv1d/slice_4: aten.slice.TensorJ»
+pkg.torch.onnx.class_hierarchy•['__main__.TCN', 'torch.nn.modules.container.Sequential', '__main__.TCNBlock', 'torch.nn.modules.container.Sequential', '__main__.CausalConv1d', 'aten.slice.Tensor']Jê
+pkg.torch.onnx.fx_nodev%slice_4 : [num_users=1] = call_function[target=torch.ops.aten.slice.Tensor](args = (%slice_3, 2, 0, -2), kwargs = {})JY
+pkg.torch.onnx.name_scopes;['', 'tcn', 'tcn.0', 'tcn.0.net', 'tcn.0.net.3', 'slice_4']Jô
+pkg.torch.onnx.stack_trace˙File "/tmp/ipykernel_2809/3988316291.py", line 138, in forward
+    x = self.tcn(x)
+  File "/usr/local/lib/python3.13/dist-packages/torch/nn/modules/container.py", line 253, in forward
+    input = module(input)
+  File "/tmp/ipykernel_2809/3988316291.py", line 93, in forward
+    self.net(x) + self.skip(x)
+  File "/usr/local/lib/python3.13/dist-packages/torch/nn/modules/container.py", line 253, in forward
+    input = module(input)
+  File "/tmp/ipykernel_2809/3988316291.py", line 31, in forward
+    y = y[
+ü
+
+slice_4relu_1node_relu_1"ReluJŸ
+	namespaceÀ: __main__.TCN/tcn: torch.nn.modules.container.Sequential/tcn.0: __main__.TCNBlock/tcn.0.net: torch.nn.modules.container.Sequential/tcn.0.net.4: torch.nn.modules.activation.ReLU/relu_1: aten.relu.defaultJ”
+pkg.torch.onnx.class_hierarchy∞['__main__.TCN', 'torch.nn.modules.container.Sequential', '__main__.TCNBlock', 'torch.nn.modules.container.Sequential', 'torch.nn.modules.activation.ReLU', 'aten.relu.default']JÜ
+pkg.torch.onnx.fx_nodel%relu_1 : [num_users=1] = call_function[target=torch.ops.aten.relu.default](args = (%slice_4,), kwargs = {})JX
+pkg.torch.onnx.name_scopes:['', 'tcn', 'tcn.0', 'tcn.0.net', 'tcn.0.net.4', 'relu_1']J„
+pkg.torch.onnx.stack_traceƒFile "/tmp/ipykernel_2809/3988316291.py", line 138, in forward
+    x = self.tcn(x)
+  File "/usr/local/lib/python3.13/dist-packages/torch/nn/modules/container.py", line 253, in forward
+    input = module(input)
+  File "/tmp/ipykernel_2809/3988316291.py", line 93, in forward
+    self.net(x) + self.skip(x)
+  File "/usr/local/lib/python3.13/dist-packages/torch/nn/modules/container.py", line 253, in forward
+    input = module(input)
+  File "/usr/local/lib/python3.13/dist-packages/torch/nn/modules/activation.py", line 143, in forward
+    return F.relu(input, inplace=self.inplace)
+¯	
+input
+tcn.0.skip.weight
+tcn.0.skip.biasconv1d_2node_conv1d_2"Conv*
+group†*
+pads@ @ †*
+auto_pad"NOTSET†*
+strides@†*
+	dilations@†*
+kernel_shape@†Jß
+	namespaceô: __main__.TCN/tcn: torch.nn.modules.container.Sequential/tcn.0: __main__.TCNBlock/tcn.0.skip: torch.nn.modules.conv.Conv1d/conv1d_2: aten.conv1d.defaultJ®
+pkg.torch.onnx.class_hierarchyÖ['__main__.TCN', 'torch.nn.modules.container.Sequential', '__main__.TCNBlock', 'torch.nn.modules.conv.Conv1d', 'aten.conv1d.default']JÆ
+pkg.torch.onnx.fx_nodeì%conv1d_2 : [num_users=1] = call_function[target=torch.ops.aten.conv1d.default](args = (%x, %p_tcn_0_skip_weight, %p_tcn_0_skip_bias), kwargs = {})JL
+pkg.torch.onnx.name_scopes.['', 'tcn', 'tcn.0', 'tcn.0.skip', 'conv1d_2']JÏ
+pkg.torch.onnx.stack_traceÕFile "/tmp/ipykernel_2809/3988316291.py", line 138, in forward
+    x = self.tcn(x)
+  File "/usr/local/lib/python3.13/dist-packages/torch/nn/modules/container.py", line 253, in forward
+    input = module(input)
+  File "/tmp/ipykernel_2809/3988316291.py", line 93, in forward
+    self.net(x) + self.skip(x)
+  File "/usr/local/lib/python3.13/dist-packages/torch/nn/modules/conv.py", line 375, in forward
+    return self._conv_forward(input, self.weight, self.bias)
+Ã
+relu_1
+conv1d_2add_44node_add_44"AddJw
+	namespacej: __main__.TCN/tcn: torch.nn.modules.container.Sequential/tcn.0: __main__.TCNBlock/add_44: aten.add.TensorJÉ
+pkg.torch.onnx.class_hierarchya['__main__.TCN', 'torch.nn.modules.container.Sequential', '__main__.TCNBlock', 'aten.add.Tensor']Jé
+pkg.torch.onnx.fx_nodet%add_44 : [num_users=1] = call_function[target=torch.ops.aten.add.Tensor](args = (%clone_1, %conv1d_2), kwargs = {})J<
+pkg.torch.onnx.name_scopes['', 'tcn', 'tcn.0', 'add_44']Jœ
+pkg.torch.onnx.stack_trace∞File "/tmp/ipykernel_2809/3988316291.py", line 138, in forward
+    x = self.tcn(x)
+  File "/usr/local/lib/python3.13/dist-packages/torch/nn/modules/container.py", line 253, in forward
+    input = module(input)
+  File "/tmp/ipykernel_2809/3988316291.py", line 93, in forward
+    self.net(x) + self.skip(x)
+¨
+add_44relu_2node_relu_2"ReluJß
+	namespaceô: __main__.TCN/tcn: torch.nn.modules.container.Sequential/tcn.0: __main__.TCNBlock/tcn.0.relu: torch.nn.modules.activation.ReLU/relu_2: aten.relu.defaultJ™
+pkg.torch.onnx.class_hierarchyá['__main__.TCN', 'torch.nn.modules.container.Sequential', '__main__.TCNBlock', 'torch.nn.modules.activation.ReLU', 'aten.relu.default']JÖ
+pkg.torch.onnx.fx_nodek%relu_2 : [num_users=2] = call_function[target=torch.ops.aten.relu.default](args = (%add_44,), kwargs = {})JJ
+pkg.torch.onnx.name_scopes,['', 'tcn', 'tcn.0', 'tcn.0.relu', 'relu_2']J€
+pkg.torch.onnx.stack_traceºFile "/tmp/ipykernel_2809/3988316291.py", line 138, in forward
+    x = self.tcn(x)
+  File "/usr/local/lib/python3.13/dist-packages/torch/nn/modules/container.py", line 253, in forward
+    input = module(input)
+  File "/tmp/ipykernel_2809/3988316291.py", line 92, in forward
+    return self.relu(
+  File "/usr/local/lib/python3.13/dist-packages/torch/nn/modules/activation.py", line 143, in forward
+    return F.relu(input, inplace=self.inplace)
+∑
+relu_2
+tcn.1.net.0.conv.weight
+tcn.1.net.0.conv.biasconv1d_3node_conv1d_3"Conv*
+group†*
+pads@@†*
+auto_pad"NOTSET†*
+strides@†*
+	dilations@†*
+kernel_shape@†JÅ
+	namespaceÛ: __main__.TCN/tcn: torch.nn.modules.container.Sequential/tcn.1: __main__.TCNBlock/tcn.1.net: torch.nn.modules.container.Sequential/tcn.1.net.0: __main__.CausalConv1d/tcn.1.net.0.conv: torch.nn.modules.conv.Conv1d/conv1d_3: aten.conv1d.defaultJÍ
+pkg.torch.onnx.class_hierarchy«['__main__.TCN', 'torch.nn.modules.container.Sequential', '__main__.TCNBlock', 'torch.nn.modules.container.Sequential', '__main__.CausalConv1d', 'torch.nn.modules.conv.Conv1d', 'aten.conv1d.default']JŒ
+pkg.torch.onnx.fx_node≥%conv1d_3 : [num_users=1] = call_function[target=torch.ops.aten.conv1d.default](args = (%relu_2, %p_tcn_1_net_0_conv_weight, %p_tcn_1_net_0_conv_bias, [1], [4], [2]), kwargs = {})Jn
+pkg.torch.onnx.name_scopesP['', 'tcn', 'tcn.1', 'tcn.1.net', 'tcn.1.net.0', 'tcn.1.net.0.conv', 'conv1d_3']J¿
+pkg.torch.onnx.stack_trace°File "/tmp/ipykernel_2809/3988316291.py", line 138, in forward
+    x = self.tcn(x)
+  File "/usr/local/lib/python3.13/dist-packages/torch/nn/modules/container.py", line 253, in forward
+    input = module(input)
+  File "/tmp/ipykernel_2809/3988316291.py", line 93, in forward
+    self.net(x) + self.skip(x)
+  File "/usr/local/lib/python3.13/dist-packages/torch/nn/modules/container.py", line 253, in forward
+    input = module(input)
+  File "/tmp/ipykernel_2809/3988316291.py", line 27, in forward
+    y = self.conv(x)
+  File "/usr/local/lib/python3.13/dist-packages/torch/nn/modules/conv.py", line 375, in forward
+    return self._conv_forward(input, self.weight, self.bias)
+Ô	
+conv1d_3
+val_14
+val_60
+val_22
+val_23slice_6node_slice_6"SliceJœ
+	namespace¡: __main__.TCN/tcn: torch.nn.modules.container.Sequential/tcn.1: __main__.TCNBlock/tcn.1.net: torch.nn.modules.container.Sequential/tcn.1.net.0: __main__.CausalConv1d/slice_6: aten.slice.TensorJ»
+pkg.torch.onnx.class_hierarchy•['__main__.TCN', 'torch.nn.modules.container.Sequential', '__main__.TCNBlock', 'torch.nn.modules.container.Sequential', '__main__.CausalConv1d', 'aten.slice.Tensor']Jê
+pkg.torch.onnx.fx_nodev%slice_6 : [num_users=1] = call_function[target=torch.ops.aten.slice.Tensor](args = (%slice_5, 2, 0, -4), kwargs = {})JY
+pkg.torch.onnx.name_scopes;['', 'tcn', 'tcn.1', 'tcn.1.net', 'tcn.1.net.0', 'slice_6']Jô
+pkg.torch.onnx.stack_trace˙File "/tmp/ipykernel_2809/3988316291.py", line 138, in forward
+    x = self.tcn(x)
+  File "/usr/local/lib/python3.13/dist-packages/torch/nn/modules/container.py", line 253, in forward
+    input = module(input)
+  File "/tmp/ipykernel_2809/3988316291.py", line 93, in forward
+    self.net(x) + self.skip(x)
+  File "/usr/local/lib/python3.13/dist-packages/torch/nn/modules/container.py", line 253, in forward
+    input = module(input)
+  File "/tmp/ipykernel_2809/3988316291.py", line 31, in forward
+    y = y[
+ü
+
+slice_6relu_3node_relu_3"ReluJŸ
+	namespaceÀ: __main__.TCN/tcn: torch.nn.modules.container.Sequential/tcn.1: __main__.TCNBlock/tcn.1.net: torch.nn.modules.container.Sequential/tcn.1.net.1: torch.nn.modules.activation.ReLU/relu_3: aten.relu.defaultJ”
+pkg.torch.onnx.class_hierarchy∞['__main__.TCN', 'torch.nn.modules.container.Sequential', '__main__.TCNBlock', 'torch.nn.modules.container.Sequential', 'torch.nn.modules.activation.ReLU', 'aten.relu.default']JÜ
+pkg.torch.onnx.fx_nodel%relu_3 : [num_users=1] = call_function[target=torch.ops.aten.relu.default](args = (%slice_6,), kwargs = {})JX
+pkg.torch.onnx.name_scopes:['', 'tcn', 'tcn.1', 'tcn.1.net', 'tcn.1.net.1', 'relu_3']J„
+pkg.torch.onnx.stack_traceƒFile "/tmp/ipykernel_2809/3988316291.py", line 138, in forward
+    x = self.tcn(x)
+  File "/usr/local/lib/python3.13/dist-packages/torch/nn/modules/container.py", line 253, in forward
+    input = module(input)
+  File "/tmp/ipykernel_2809/3988316291.py", line 93, in forward
+    self.net(x) + self.skip(x)
+  File "/usr/local/lib/python3.13/dist-packages/torch/nn/modules/container.py", line 253, in forward
+    input = module(input)
+  File "/usr/local/lib/python3.13/dist-packages/torch/nn/modules/activation.py", line 143, in forward
+    return F.relu(input, inplace=self.inplace)
+∏
+relu_3
+tcn.1.net.3.conv.weight
+tcn.1.net.3.conv.biasconv1d_4node_conv1d_4"Conv*
+group†*
+pads@@†*
+auto_pad"NOTSET†*
+strides@†*
+	dilations@†*
+kernel_shape@†JÅ
+	namespaceÛ: __main__.TCN/tcn: torch.nn.modules.container.Sequential/tcn.1: __main__.TCNBlock/tcn.1.net: torch.nn.modules.container.Sequential/tcn.1.net.3: __main__.CausalConv1d/tcn.1.net.3.conv: torch.nn.modules.conv.Conv1d/conv1d_4: aten.conv1d.defaultJÍ
+pkg.torch.onnx.class_hierarchy«['__main__.TCN', 'torch.nn.modules.container.Sequential', '__main__.TCNBlock', 'torch.nn.modules.container.Sequential', '__main__.CausalConv1d', 'torch.nn.modules.conv.Conv1d', 'aten.conv1d.default']Jœ
+pkg.torch.onnx.fx_node¥%conv1d_4 : [num_users=1] = call_function[target=torch.ops.aten.conv1d.default](args = (%clone_2, %p_tcn_1_net_3_conv_weight, %p_tcn_1_net_3_conv_bias, [1], [4], [2]), kwargs = {})Jn
+pkg.torch.onnx.name_scopesP['', 'tcn', 'tcn.1', 'tcn.1.net', 'tcn.1.net.3', 'tcn.1.net.3.conv', 'conv1d_4']J¿
+pkg.torch.onnx.stack_trace°File "/tmp/ipykernel_2809/3988316291.py", line 138, in forward
+    x = self.tcn(x)
+  File "/usr/local/lib/python3.13/dist-packages/torch/nn/modules/container.py", line 253, in forward
+    input = module(input)
+  File "/tmp/ipykernel_2809/3988316291.py", line 93, in forward
+    self.net(x) + self.skip(x)
+  File "/usr/local/lib/python3.13/dist-packages/torch/nn/modules/container.py", line 253, in forward
+    input = module(input)
+  File "/tmp/ipykernel_2809/3988316291.py", line 27, in forward
+    y = self.conv(x)
+  File "/usr/local/lib/python3.13/dist-packages/torch/nn/modules/conv.py", line 375, in forward
+    return self._conv_forward(input, self.weight, self.bias)
+Ô	
+conv1d_4
+val_14
+val_60
+val_22
+val_23slice_8node_slice_8"SliceJœ
+	namespace¡: __main__.TCN/tcn: torch.nn.modules.container.Sequential/tcn.1: __main__.TCNBlock/tcn.1.net: torch.nn.modules.container.Sequential/tcn.1.net.3: __main__.CausalConv1d/slice_8: aten.slice.TensorJ»
+pkg.torch.onnx.class_hierarchy•['__main__.TCN', 'torch.nn.modules.container.Sequential', '__main__.TCNBlock', 'torch.nn.modules.container.Sequential', '__main__.CausalConv1d', 'aten.slice.Tensor']Jê
+pkg.torch.onnx.fx_nodev%slice_8 : [num_users=1] = call_function[target=torch.ops.aten.slice.Tensor](args = (%slice_7, 2, 0, -4), kwargs = {})JY
+pkg.torch.onnx.name_scopes;['', 'tcn', 'tcn.1', 'tcn.1.net', 'tcn.1.net.3', 'slice_8']Jô
+pkg.torch.onnx.stack_trace˙File "/tmp/ipykernel_2809/3988316291.py", line 138, in forward
+    x = self.tcn(x)
+  File "/usr/local/lib/python3.13/dist-packages/torch/nn/modules/container.py", line 253, in forward
+    input = module(input)
+  File "/tmp/ipykernel_2809/3988316291.py", line 93, in forward
+    self.net(x) + self.skip(x)
+  File "/usr/local/lib/python3.13/dist-packages/torch/nn/modules/container.py", line 253, in forward
+    input = module(input)
+  File "/tmp/ipykernel_2809/3988316291.py", line 31, in forward
+    y = y[
+ü
+
+slice_8relu_4node_relu_4"ReluJŸ
+	namespaceÀ: __main__.TCN/tcn: torch.nn.modules.container.Sequential/tcn.1: __main__.TCNBlock/tcn.1.net: torch.nn.modules.container.Sequential/tcn.1.net.4: torch.nn.modules.activation.ReLU/relu_4: aten.relu.defaultJ”
+pkg.torch.onnx.class_hierarchy∞['__main__.TCN', 'torch.nn.modules.container.Sequential', '__main__.TCNBlock', 'torch.nn.modules.container.Sequential', 'torch.nn.modules.activation.ReLU', 'aten.relu.default']JÜ
+pkg.torch.onnx.fx_nodel%relu_4 : [num_users=1] = call_function[target=torch.ops.aten.relu.default](args = (%slice_8,), kwargs = {})JX
+pkg.torch.onnx.name_scopes:['', 'tcn', 'tcn.1', 'tcn.1.net', 'tcn.1.net.4', 'relu_4']J„
+pkg.torch.onnx.stack_traceƒFile "/tmp/ipykernel_2809/3988316291.py", line 138, in forward
+    x = self.tcn(x)
+  File "/usr/local/lib/python3.13/dist-packages/torch/nn/modules/container.py", line 253, in forward
+    input = module(input)
+  File "/tmp/ipykernel_2809/3988316291.py", line 93, in forward
+    self.net(x) + self.skip(x)
+  File "/usr/local/lib/python3.13/dist-packages/torch/nn/modules/container.py", line 253, in forward
+    input = module(input)
+  File "/usr/local/lib/python3.13/dist-packages/torch/nn/modules/activation.py", line 143, in forward
+    return F.relu(input, inplace=self.inplace)
+»
+relu_4
+relu_2add_93node_add_93"AddJw
+	namespacej: __main__.TCN/tcn: torch.nn.modules.container.Sequential/tcn.1: __main__.TCNBlock/add_93: aten.add.TensorJÉ
+pkg.torch.onnx.class_hierarchya['__main__.TCN', 'torch.nn.modules.container.Sequential', '__main__.TCNBlock', 'aten.add.Tensor']Jå
+pkg.torch.onnx.fx_noder%add_93 : [num_users=1] = call_function[target=torch.ops.aten.add.Tensor](args = (%clone_3, %relu_2), kwargs = {})J<
+pkg.torch.onnx.name_scopes['', 'tcn', 'tcn.1', 'add_93']Jœ
+pkg.torch.onnx.stack_trace∞File "/tmp/ipykernel_2809/3988316291.py", line 138, in forward
+    x = self.tcn(x)
+  File "/usr/local/lib/python3.13/dist-packages/torch/nn/modules/container.py", line 253, in forward
+    input = module(input)
+  File "/tmp/ipykernel_2809/3988316291.py", line 93, in forward
+    self.net(x) + self.skip(x)
+¨
+add_93relu_5node_relu_5"ReluJß
+	namespaceô: __main__.TCN/tcn: torch.nn.modules.container.Sequential/tcn.1: __main__.TCNBlock/tcn.1.relu: torch.nn.modules.activation.ReLU/relu_5: aten.relu.defaultJ™
+pkg.torch.onnx.class_hierarchyá['__main__.TCN', 'torch.nn.modules.container.Sequential', '__main__.TCNBlock', 'torch.nn.modules.activation.ReLU', 'aten.relu.default']JÖ
+pkg.torch.onnx.fx_nodek%relu_5 : [num_users=2] = call_function[target=torch.ops.aten.relu.default](args = (%add_93,), kwargs = {})JJ
+pkg.torch.onnx.name_scopes,['', 'tcn', 'tcn.1', 'tcn.1.relu', 'relu_5']J€
+pkg.torch.onnx.stack_traceºFile "/tmp/ipykernel_2809/3988316291.py", line 138, in forward
+    x = self.tcn(x)
+  File "/usr/local/lib/python3.13/dist-packages/torch/nn/modules/container.py", line 253, in forward
+    input = module(input)
+  File "/tmp/ipykernel_2809/3988316291.py", line 92, in forward
+    return self.relu(
+  File "/usr/local/lib/python3.13/dist-packages/torch/nn/modules/activation.py", line 143, in forward
+    return F.relu(input, inplace=self.inplace)
+∑
+relu_5
+tcn.2.net.0.conv.weight
+tcn.2.net.0.conv.biasconv1d_5node_conv1d_5"Conv*
+group†*
+pads@@†*
+auto_pad"NOTSET†*
+strides@†*
+	dilations@†*
+kernel_shape@†JÅ
+	namespaceÛ: __main__.TCN/tcn: torch.nn.modules.container.Sequential/tcn.2: __main__.TCNBlock/tcn.2.net: torch.nn.modules.container.Sequential/tcn.2.net.0: __main__.CausalConv1d/tcn.2.net.0.conv: torch.nn.modules.conv.Conv1d/conv1d_5: aten.conv1d.defaultJÍ
+pkg.torch.onnx.class_hierarchy«['__main__.TCN', 'torch.nn.modules.container.Sequential', '__main__.TCNBlock', 'torch.nn.modules.container.Sequential', '__main__.CausalConv1d', 'torch.nn.modules.conv.Conv1d', 'aten.conv1d.default']JŒ
+pkg.torch.onnx.fx_node≥%conv1d_5 : [num_users=1] = call_function[target=torch.ops.aten.conv1d.default](args = (%relu_5, %p_tcn_2_net_0_conv_weight, %p_tcn_2_net_0_conv_bias, [1], [8], [4]), kwargs = {})Jn
+pkg.torch.onnx.name_scopesP['', 'tcn', 'tcn.2', 'tcn.2.net', 'tcn.2.net.0', 'tcn.2.net.0.conv', 'conv1d_5']J¿
+pkg.torch.onnx.stack_trace°File "/tmp/ipykernel_2809/3988316291.py", line 138, in forward
+    x = self.tcn(x)
+  File "/usr/local/lib/python3.13/dist-packages/torch/nn/modules/container.py", line 253, in forward
+    input = module(input)
+  File "/tmp/ipykernel_2809/3988316291.py", line 93, in forward
+    self.net(x) + self.skip(x)
+  File "/usr/local/lib/python3.13/dist-packages/torch/nn/modules/container.py", line 253, in forward
+    input = module(input)
+  File "/tmp/ipykernel_2809/3988316291.py", line 27, in forward
+    y = self.conv(x)
+  File "/usr/local/lib/python3.13/dist-packages/torch/nn/modules/conv.py", line 375, in forward
+    return self._conv_forward(input, self.weight, self.bias)
+ı	
+conv1d_5
+val_14
+val_101
+val_22
+val_23slice_10node_slice_10"SliceJ–
+	namespace¬: __main__.TCN/tcn: torch.nn.modules.container.Sequential/tcn.2: __main__.TCNBlock/tcn.2.net: torch.nn.modules.container.Sequential/tcn.2.net.0: __main__.CausalConv1d/slice_10: aten.slice.TensorJ»
+pkg.torch.onnx.class_hierarchy•['__main__.TCN', 'torch.nn.modules.container.Sequential', '__main__.TCNBlock', 'torch.nn.modules.container.Sequential', '__main__.CausalConv1d', 'aten.slice.Tensor']Jë
+pkg.torch.onnx.fx_nodew%slice_10 : [num_users=1] = call_function[target=torch.ops.aten.slice.Tensor](args = (%slice_9, 2, 0, -8), kwargs = {})JZ
+pkg.torch.onnx.name_scopes<['', 'tcn', 'tcn.2', 'tcn.2.net', 'tcn.2.net.0', 'slice_10']Jô
+pkg.torch.onnx.stack_trace˙File "/tmp/ipykernel_2809/3988316291.py", line 138, in forward
+    x = self.tcn(x)
+  File "/usr/local/lib/python3.13/dist-packages/torch/nn/modules/container.py", line 253, in forward
+    input = module(input)
+  File "/tmp/ipykernel_2809/3988316291.py", line 93, in forward
+    self.net(x) + self.skip(x)
+  File "/usr/local/lib/python3.13/dist-packages/torch/nn/modules/container.py", line 253, in forward
+    input = module(input)
+  File "/tmp/ipykernel_2809/3988316291.py", line 31, in forward
+    y = y[
+°
+
+slice_10relu_6node_relu_6"ReluJŸ
+	namespaceÀ: __main__.TCN/tcn: torch.nn.modules.container.Sequential/tcn.2: __main__.TCNBlock/tcn.2.net: torch.nn.modules.container.Sequential/tcn.2.net.1: torch.nn.modules.activation.ReLU/relu_6: aten.relu.defaultJ”
+pkg.torch.onnx.class_hierarchy∞['__main__.TCN', 'torch.nn.modules.container.Sequential', '__main__.TCNBlock', 'torch.nn.modules.container.Sequential', 'torch.nn.modules.activation.ReLU', 'aten.relu.default']Já
+pkg.torch.onnx.fx_nodem%relu_6 : [num_users=1] = call_function[target=torch.ops.aten.relu.default](args = (%slice_10,), kwargs = {})JX
+pkg.torch.onnx.name_scopes:['', 'tcn', 'tcn.2', 'tcn.2.net', 'tcn.2.net.1', 'relu_6']J„
+pkg.torch.onnx.stack_traceƒFile "/tmp/ipykernel_2809/3988316291.py", line 138, in forward
+    x = self.tcn(x)
+  File "/usr/local/lib/python3.13/dist-packages/torch/nn/modules/container.py", line 253, in forward
+    input = module(input)
+  File "/tmp/ipykernel_2809/3988316291.py", line 93, in forward
+    self.net(x) + self.skip(x)
+  File "/usr/local/lib/python3.13/dist-packages/torch/nn/modules/container.py", line 253, in forward
+    input = module(input)
+  File "/usr/local/lib/python3.13/dist-packages/torch/nn/modules/activation.py", line 143, in forward
+    return F.relu(input, inplace=self.inplace)
+∏
+relu_6
+tcn.2.net.3.conv.weight
+tcn.2.net.3.conv.biasconv1d_6node_conv1d_6"Conv*
+group†*
+pads@@†*
+auto_pad"NOTSET†*
+strides@†*
+	dilations@†*
+kernel_shape@†JÅ
+	namespaceÛ: __main__.TCN/tcn: torch.nn.modules.container.Sequential/tcn.2: __main__.TCNBlock/tcn.2.net: torch.nn.modules.container.Sequential/tcn.2.net.3: __main__.CausalConv1d/tcn.2.net.3.conv: torch.nn.modules.conv.Conv1d/conv1d_6: aten.conv1d.defaultJÍ
+pkg.torch.onnx.class_hierarchy«['__main__.TCN', 'torch.nn.modules.container.Sequential', '__main__.TCNBlock', 'torch.nn.modules.container.Sequential', '__main__.CausalConv1d', 'torch.nn.modules.conv.Conv1d', 'aten.conv1d.default']Jœ
+pkg.torch.onnx.fx_node¥%conv1d_6 : [num_users=1] = call_function[target=torch.ops.aten.conv1d.default](args = (%clone_4, %p_tcn_2_net_3_conv_weight, %p_tcn_2_net_3_conv_bias, [1], [8], [4]), kwargs = {})Jn
+pkg.torch.onnx.name_scopesP['', 'tcn', 'tcn.2', 'tcn.2.net', 'tcn.2.net.3', 'tcn.2.net.3.conv', 'conv1d_6']J¿
+pkg.torch.onnx.stack_trace°File "/tmp/ipykernel_2809/3988316291.py", line 138, in forward
+    x = self.tcn(x)
+  File "/usr/local/lib/python3.13/dist-packages/torch/nn/modules/container.py", line 253, in forward
+    input = module(input)
+  File "/tmp/ipykernel_2809/3988316291.py", line 93, in forward
+    self.net(x) + self.skip(x)
+  File "/usr/local/lib/python3.13/dist-packages/torch/nn/modules/container.py", line 253, in forward
+    input = module(input)
+  File "/tmp/ipykernel_2809/3988316291.py", line 27, in forward
+    y = self.conv(x)
+  File "/usr/local/lib/python3.13/dist-packages/torch/nn/modules/conv.py", line 375, in forward
+    return self._conv_forward(input, self.weight, self.bias)
+ˆ	
+conv1d_6
+val_14
+val_101
+val_22
+val_23slice_12node_slice_12"SliceJ–
+	namespace¬: __main__.TCN/tcn: torch.nn.modules.container.Sequential/tcn.2: __main__.TCNBlock/tcn.2.net: torch.nn.modules.container.Sequential/tcn.2.net.3: __main__.CausalConv1d/slice_12: aten.slice.TensorJ»
+pkg.torch.onnx.class_hierarchy•['__main__.TCN', 'torch.nn.modules.container.Sequential', '__main__.TCNBlock', 'torch.nn.modules.container.Sequential', '__main__.CausalConv1d', 'aten.slice.Tensor']Jí
+pkg.torch.onnx.fx_nodex%slice_12 : [num_users=1] = call_function[target=torch.ops.aten.slice.Tensor](args = (%slice_11, 2, 0, -8), kwargs = {})JZ
+pkg.torch.onnx.name_scopes<['', 'tcn', 'tcn.2', 'tcn.2.net', 'tcn.2.net.3', 'slice_12']Jô
+pkg.torch.onnx.stack_trace˙File "/tmp/ipykernel_2809/3988316291.py", line 138, in forward
+    x = self.tcn(x)
+  File "/usr/local/lib/python3.13/dist-packages/torch/nn/modules/container.py", line 253, in forward
+    input = module(input)
+  File "/tmp/ipykernel_2809/3988316291.py", line 93, in forward
+    self.net(x) + self.skip(x)
+  File "/usr/local/lib/python3.13/dist-packages/torch/nn/modules/container.py", line 253, in forward
+    input = module(input)
+  File "/tmp/ipykernel_2809/3988316291.py", line 31, in forward
+    y = y[
+°
+
+slice_12relu_7node_relu_7"ReluJŸ
+	namespaceÀ: __main__.TCN/tcn: torch.nn.modules.container.Sequential/tcn.2: __main__.TCNBlock/tcn.2.net: torch.nn.modules.container.Sequential/tcn.2.net.4: torch.nn.modules.activation.ReLU/relu_7: aten.relu.defaultJ”
+pkg.torch.onnx.class_hierarchy∞['__main__.TCN', 'torch.nn.modules.container.Sequential', '__main__.TCNBlock', 'torch.nn.modules.container.Sequential', 'torch.nn.modules.activation.ReLU', 'aten.relu.default']Já
+pkg.torch.onnx.fx_nodem%relu_7 : [num_users=1] = call_function[target=torch.ops.aten.relu.default](args = (%slice_12,), kwargs = {})JX
+pkg.torch.onnx.name_scopes:['', 'tcn', 'tcn.2', 'tcn.2.net', 'tcn.2.net.4', 'relu_7']J„
+pkg.torch.onnx.stack_traceƒFile "/tmp/ipykernel_2809/3988316291.py", line 138, in forward
+    x = self.tcn(x)
+  File "/usr/local/lib/python3.13/dist-packages/torch/nn/modules/container.py", line 253, in forward
+    input = module(input)
+  File "/tmp/ipykernel_2809/3988316291.py", line 93, in forward
+    self.net(x) + self.skip(x)
+  File "/usr/local/lib/python3.13/dist-packages/torch/nn/modules/container.py", line 253, in forward
+    input = module(input)
+  File "/usr/local/lib/python3.13/dist-packages/torch/nn/modules/activation.py", line 143, in forward
+    return F.relu(input, inplace=self.inplace)
+Õ
+relu_7
+relu_5add_142node_add_142"AddJx
+	namespacek: __main__.TCN/tcn: torch.nn.modules.container.Sequential/tcn.2: __main__.TCNBlock/add_142: aten.add.TensorJÉ
+pkg.torch.onnx.class_hierarchya['__main__.TCN', 'torch.nn.modules.container.Sequential', '__main__.TCNBlock', 'aten.add.Tensor']Jç
+pkg.torch.onnx.fx_nodes%add_142 : [num_users=1] = call_function[target=torch.ops.aten.add.Tensor](args = (%clone_5, %relu_5), kwargs = {})J=
+pkg.torch.onnx.name_scopes['', 'tcn', 'tcn.2', 'add_142']Jœ
+pkg.torch.onnx.stack_trace∞File "/tmp/ipykernel_2809/3988316291.py", line 138, in forward
+    x = self.tcn(x)
+  File "/usr/local/lib/python3.13/dist-packages/torch/nn/modules/container.py", line 253, in forward
+    input = module(input)
+  File "/tmp/ipykernel_2809/3988316291.py", line 93, in forward
+    self.net(x) + self.skip(x)
+Æ
+add_142relu_8node_relu_8"ReluJß
+	namespaceô: __main__.TCN/tcn: torch.nn.modules.container.Sequential/tcn.2: __main__.TCNBlock/tcn.2.relu: torch.nn.modules.activation.ReLU/relu_8: aten.relu.defaultJ™
+pkg.torch.onnx.class_hierarchyá['__main__.TCN', 'torch.nn.modules.container.Sequential', '__main__.TCNBlock', 'torch.nn.modules.activation.ReLU', 'aten.relu.default']JÜ
+pkg.torch.onnx.fx_nodel%relu_8 : [num_users=1] = call_function[target=torch.ops.aten.relu.default](args = (%add_142,), kwargs = {})JJ
+pkg.torch.onnx.name_scopes,['', 'tcn', 'tcn.2', 'tcn.2.relu', 'relu_8']J€
+pkg.torch.onnx.stack_traceºFile "/tmp/ipykernel_2809/3988316291.py", line 138, in forward
+    x = self.tcn(x)
+  File "/usr/local/lib/python3.13/dist-packages/torch/nn/modules/container.py", line 253, in forward
+    input = module(input)
+  File "/tmp/ipykernel_2809/3988316291.py", line 92, in forward
+    return self.relu(
+  File "/usr/local/lib/python3.13/dist-packages/torch/nn/modules/activation.py", line 143, in forward
+    return F.relu(input, inplace=self.inplace)
+Å
+relu_8
+val_18	unsqueezenode_unsqueeze"	UnsqueezeJn
+	namespacea: __main__.TCN/pool: torch.nn.modules.pooling.AdaptiveAvgPool1d/unsqueeze: aten.unsqueeze.defaultJz
+pkg.torch.onnx.class_hierarchyX['__main__.TCN', 'torch.nn.modules.pooling.AdaptiveAvgPool1d', 'aten.unsqueeze.default']Jê
+pkg.torch.onnx.fx_nodev%unsqueeze : [num_users=1] = call_function[target=torch.ops.aten.unsqueeze.default](args = (%relu_8, -2), kwargs = {})J7
+pkg.torch.onnx.name_scopes['', 'pool', 'unsqueeze']Jê
+pkg.torch.onnx.stack_traceÒFile "/tmp/ipykernel_2809/3988316291.py", line 140, in forward
+    x = self.pool(x)
+  File "/usr/local/lib/python3.13/dist-packages/torch/nn/modules/pooling.py", line 1470, in forward
+    return F.adaptive_avg_pool1d(input, self.output_size)
+è
+	unsqueeze
+val_129mean	node_mean"
+ReduceMean*
+noop_with_empty_axes †*
+keepdims†J`
+	namespaceS: __main__.TCN/pool: torch.nn.modules.pooling.AdaptiveAvgPool1d/mean: aten.mean.dimJq
+pkg.torch.onnx.class_hierarchyO['__main__.TCN', 'torch.nn.modules.pooling.AdaptiveAvgPool1d', 'aten.mean.dim']Jë
+pkg.torch.onnx.fx_nodew%mean : [num_users=1] = call_function[target=torch.ops.aten.mean.dim](args = (%unsqueeze, [-1, -2], True), kwargs = {})J2
+pkg.torch.onnx.name_scopes['', 'pool', 'mean']Jê
+pkg.torch.onnx.stack_traceÒFile "/tmp/ipykernel_2809/3988316291.py", line 140, in forward
+    x = self.pool(x)
+  File "/usr/local/lib/python3.13/dist-packages/torch/nn/modules/pooling.py", line 1470, in forward
+    return F.adaptive_avg_pool1d(input, self.output_size)
+ﬂ
+mean
+val_18squeezenode_squeeze"SqueezeJf
+	namespaceY: __main__.TCN/pool: torch.nn.modules.pooling.AdaptiveAvgPool1d/squeeze: aten.squeeze.dimJt
+pkg.torch.onnx.class_hierarchyR['__main__.TCN', 'torch.nn.modules.pooling.AdaptiveAvgPool1d', 'aten.squeeze.dim']JÜ
+pkg.torch.onnx.fx_nodel%squeeze : [num_users=1] = call_function[target=torch.ops.aten.squeeze.dim](args = (%mean, -2), kwargs = {})J5
+pkg.torch.onnx.name_scopes['', 'pool', 'squeeze']Jê
+pkg.torch.onnx.stack_traceÒFile "/tmp/ipykernel_2809/3988316291.py", line 140, in forward
+    x = self.pool(x)
+  File "/usr/local/lib/python3.13/dist-packages/torch/nn/modules/pooling.py", line 1470, in forward
+    return F.adaptive_avg_pool1d(input, self.output_size)
+Í
+squeeze
+val_130	squeeze_1node_squeeze_1"SqueezeJ7
+	namespace*: __main__.TCN/squeeze_1: aten.squeeze.dimJF
+pkg.torch.onnx.class_hierarchy$['__main__.TCN', 'aten.squeeze.dim']Jã
+pkg.torch.onnx.fx_nodeq%squeeze_1 : [num_users=1] = call_function[target=torch.ops.aten.squeeze.dim](args = (%squeeze, -1), kwargs = {})J/
+pkg.torch.onnx.name_scopes['', 'squeeze_1']Jr
+pkg.torch.onnx.stack_traceTFile "/tmp/ipykernel_2809/3988316291.py", line 142, in forward
+    x = x.squeeze(-1)
+®
+	squeeze_1
+	fc.weight
+fc.biasoutputnode_linear"Gemm*
+beta  Ä?†*
+transB†*
+alpha  Ä?†*
+transA †JZ
+	namespaceM: __main__.TCN/fc: torch.nn.modules.linear.Linear/linear: aten.linear.defaultJk
+pkg.torch.onnx.class_hierarchyI['__main__.TCN', 'torch.nn.modules.linear.Linear', 'aten.linear.default']J§
+pkg.torch.onnx.fx_nodeâ%linear : [num_users=1] = call_function[target=torch.ops.aten.linear.default](args = (%squeeze_1, %p_fc_weight, %p_fc_bias), kwargs = {})J2
+pkg.torch.onnx.name_scopes['', 'fc', 'linear']Jà
+pkg.torch.onnx.stack_traceÈFile "/tmp/ipykernel_2809/3988316291.py", line 144, in forward
+    return self.fc(x)
+  File "/usr/local/lib/python3.13/dist-packages/torch/nn/modules/linear.py", line 134, in forward
+    return F.linear(input, self.weight, self.bias)
+main_graph*fBtcn.0.net.0.conv.weightj"
+locationfocuspen_tcn.onnx.dataj
+offset384j
+length1152p*]Btcn.0.net.0.conv.biasJ@Î≤Á=ﬁ’ÇΩ¥v≥=-á¬ºÅxæ¸æ'çÉ= ï«Ω+dîΩ5^é<√JÚ:%_õΩx›”ªX©=ó+K=¢æ*gBtcn.0.net.3.conv.weightj"
+locationfocuspen_tcn.onnx.dataj
+offset1536j
+length3072p*]Btcn.0.net.3.conv.biasJ@\∂íºåo´9â√øΩ"Ùt=,«º5Áú<l•ÎΩMdèΩ_t¸<_®ΩîA∆Ω∂<ò´w=MC≠=uK>ım…=*]Btcn.0.skip.weightj"
+locationfocuspen_tcn.onnx.dataj
+offset0j
+length384p*WBtcn.0.skip.biasJ@=Ÿº=œPDæ›’$>ß±ΩFaΩÔZ>≈æû’>˛á√>je™æÅöæ?æ‘}FæUçÓΩ¨§ªwúüΩ*gBtcn.1.net.0.conv.weightj"
+locationfocuspen_tcn.onnx.dataj
+offset4608j
+length3072p*]Btcn.1.net.0.conv.biasJ@ó∏∞Ωëu>?G=b}Ω∏◊ÇΩë0˙ΩéôΩÏ¡ºQ&æ«¯kΩÌ	,<¥*t>[Ö>ÒXΩ6Qç>£î’º*gBtcn.1.net.3.conv.weightj"
+locationfocuspen_tcn.onnx.dataj
+offset7680j
+length3072p*]Btcn.1.net.3.conv.biasJ@ˇÀx>é’l>gíi>Ùº∏Ω Op=/MºπÑòºx…=r€ >‹&<Ñ´!æ:JV=
+ü$æõ©æy2æíÈ<*hBtcn.2.net.0.conv.weightj"
+locationfocuspen_tcn.onnx.dataj
+offset10752j
+length3072p*]Btcn.2.net.0.conv.biasJ@]E$æt˚·Ω”Tö>i‘æB†•=,d∫ΩÅ<é>f‘‡π„ÍæπàQæIÈAΩÆÓΩ¨>À∫ºÚ°Yº≤ôªΩ*hBtcn.2.net.3.conv.weightj"
+locationfocuspen_tcn.onnx.dataj
+offset13824j
+length3072p*]Btcn.2.net.3.conv.biasJ@∑ƒ=§Å>Ø@|>¿∑}:”|ÙΩöï
+=áâ≥Ω¨dhΩ;=å£O=ç¨R>}v+æçìªﬂQ=ÁûΩ˝¡Ω*îB	fc.weightJÄÀèÖæóÛnæçúæÍ„=»W=;2U>£c>«≤øΩt=Ú∫@>&©æDo%> Y2æää[>L÷ÎΩÖ4ü=ÛÈÀ<◊%©=©â=_/æ6é0>;>]^/æ*qæ{æ…æs2Âº¿á=0≥>;µ%#Ω‰7%>/Ù≠<Nà!Ω”—&>Á5=´ë≥æ Õ◊æ){Ù=,Rùæ!á>Çá>»7Cæ++.=eÖøÜ†?=›å™æÊktΩïÏìΩu=êÎæ›ÌèΩ5/ÈΩä≥Bº3ÆÚ=&pΩáFÜæ¯∞?>ıãæ«®'æh⁄=›Y>rã>?qÁΩ<Ò‡=*Bfc.biasJ™"∞æ™î]ºês=VJ©<*Bval_14J        *Bval_18J˛ˇˇˇˇˇˇˇ*Bval_22J       *Bval_60J¸ˇˇˇˇˇˇˇ*Bval_101J¯ˇˇˇˇˇˇˇ*Bval_129Jˇˇˇˇˇˇˇˇ˛ˇˇˇˇˇˇˇ*Bval_23J       *Bval_130JˇˇˇˇˇˇˇˇZ⁄
+input+
+)%
+
+batch_size
+
+sequence_length"=
+/pkg.torch.export.graph_signature.InputSpec.kind
+USER_INPUT"=
+5pkg.torch.export.graph_signature.InputSpec.persistentNone"&
+!pkg.torch.onnx.original_node_namexbê
+output
+
+
+batch_size
+"?
+0pkg.torch.export.graph_signature.OutputSpec.kindUSER_OUTPUT"+
+!pkg.torch.onnx.original_node_namelinearjÍ
+tcn.0.net.0.conv.weight
+
+
+
+"<
+/pkg.torch.export.graph_signature.InputSpec.kind	PARAMETER"=
+5pkg.torch.export.graph_signature.InputSpec.persistentNone">
+!pkg.torch.onnx.original_node_namep_tcn_0_net_0_conv_weightjﬁ
+tcn.0.net.0.conv.bias
+
+
+"<
+/pkg.torch.export.graph_signature.InputSpec.kind	PARAMETER"=
+5pkg.torch.export.graph_signature.InputSpec.persistentNone"<
+!pkg.torch.onnx.original_node_namep_tcn_0_net_0_conv_biasjÍ
+tcn.0.net.3.conv.weight
+
+
+
+"<
+/pkg.torch.export.graph_signature.InputSpec.kind	PARAMETER"=
+5pkg.torch.export.graph_signature.InputSpec.persistentNone">
+!pkg.torch.onnx.original_node_namep_tcn_0_net_3_conv_weightjﬁ
+tcn.0.net.3.conv.bias
+
+
+"<
+/pkg.torch.export.graph_signature.InputSpec.kind	PARAMETER"=
+5pkg.torch.export.graph_signature.InputSpec.persistentNone"<
+!pkg.torch.onnx.original_node_namep_tcn_0_net_3_conv_biasjﬁ
+tcn.0.skip.weight
+
+
+
+"<
+/pkg.torch.export.graph_signature.InputSpec.kind	PARAMETER"=
+5pkg.torch.export.graph_signature.InputSpec.persistentNone"8
+!pkg.torch.onnx.original_node_namep_tcn_0_skip_weightj“
+tcn.0.skip.bias
+
+
+"<
+/pkg.torch.export.graph_signature.InputSpec.kind	PARAMETER"=
+5pkg.torch.export.graph_signature.InputSpec.persistentNone"6
+!pkg.torch.onnx.original_node_namep_tcn_0_skip_biasjÍ
+tcn.1.net.0.conv.weight
+
+
+
+"<
+/pkg.torch.export.graph_signature.InputSpec.kind	PARAMETER"=
+5pkg.torch.export.graph_signature.InputSpec.persistentNone">
+!pkg.torch.onnx.original_node_namep_tcn_1_net_0_conv_weightjﬁ
+tcn.1.net.0.conv.bias
+
+
+"<
+/pkg.torch.export.graph_signature.InputSpec.kind	PARAMETER"=
+5pkg.torch.export.graph_signature.InputSpec.persistentNone"<
+!pkg.torch.onnx.original_node_namep_tcn_1_net_0_conv_biasjÍ
+tcn.1.net.3.conv.weight
+
+
+
+"<
+/pkg.torch.export.graph_signature.InputSpec.kind	PARAMETER"=
+5pkg.torch.export.graph_signature.InputSpec.persistentNone">
+!pkg.torch.onnx.original_node_namep_tcn_1_net_3_conv_weightjﬁ
+tcn.1.net.3.conv.bias
+
+
+"<
+/pkg.torch.export.graph_signature.InputSpec.kind	PARAMETER"=
+5pkg.torch.export.graph_signature.InputSpec.persistentNone"<
+!pkg.torch.onnx.original_node_namep_tcn_1_net_3_conv_biasjÍ
+tcn.2.net.0.conv.weight
+
+
+
+"<
+/pkg.torch.export.graph_signature.InputSpec.kind	PARAMETER"=
+5pkg.torch.export.graph_signature.InputSpec.persistentNone">
+!pkg.torch.onnx.original_node_namep_tcn_2_net_0_conv_weightjﬁ
+tcn.2.net.0.conv.bias
+
+
+"<
+/pkg.torch.export.graph_signature.InputSpec.kind	PARAMETER"=
+5pkg.torch.export.graph_signature.InputSpec.persistentNone"<
+!pkg.torch.onnx.original_node_namep_tcn_2_net_0_conv_biasjÍ
+tcn.2.net.3.conv.weight
+
+
+
+"<
+/pkg.torch.export.graph_signature.InputSpec.kind	PARAMETER"=
+5pkg.torch.export.graph_signature.InputSpec.persistentNone">
+!pkg.torch.onnx.original_node_namep_tcn_2_net_3_conv_weightjﬁ
+tcn.2.net.3.conv.bias
+
+
+"<
+/pkg.torch.export.graph_signature.InputSpec.kind	PARAMETER"=
+5pkg.torch.export.graph_signature.InputSpec.persistentNone"<
+!pkg.torch.onnx.original_node_namep_tcn_2_net_3_conv_biasj 
+	fc.weight
+
+
+"<
+/pkg.torch.export.graph_signature.InputSpec.kind	PARAMETER"=
+5pkg.torch.export.graph_signature.InputSpec.persistentNone"0
+!pkg.torch.onnx.original_node_namep_fc_weightj¬
+fc.bias
+
+
+"<
+/pkg.torch.export.graph_signature.InputSpec.kind	PARAMETER"=
+5pkg.torch.export.graph_signature.InputSpec.persistentNone".
+!pkg.torch.onnx.original_node_name	p_fc_biasj[
+val_14
+
+
+"E
+$pkg.onnxscript.optimizer.folded_from['val_0', 'val_12', 'val_13']j\
+val_18
+
+
+"F
+$pkg.onnxscript.optimizer.folded_from['val_15', 'val_16', 'val_17']j\
+val_22
+
+
+"F
+$pkg.onnxscript.optimizer.folded_from['val_19', 'val_20', 'val_21']j\
+val_60
+
+
+"F
+$pkg.onnxscript.optimizer.folded_from['val_57', 'val_58', 'val_59']j^
+val_101
+
+
+"G
+$pkg.onnxscript.optimizer.folded_from['val_100', 'val_98', 'val_99']jU
+val_129
+
+
+">
+$pkg.onnxscript.optimizer.folded_from['val_127', 'val_128']j
+val_23
+
+
+j
+val_130
+
+
+j9
+conv1d/
+-)
+
+batch_size
+
+sequence_length + 2j6
+slice_2+
+)%
+
+batch_size
+
+sequence_lengthj3
+relu+
+)%
+
+batch_size
+
+sequence_lengthj;
+conv1d_1/
+-)
+
+batch_size
+
+sequence_length + 2j6
+slice_4+
+)%
+
+batch_size
+
+sequence_lengthj5
+relu_1+
+)%
+
+batch_size
+
+sequence_lengthj7
+conv1d_2+
+)%
+
+batch_size
+
+sequence_lengthj5
+add_44+
+)%
+
+batch_size
+
+sequence_lengthj5
+relu_2+
+)%
+
+batch_size
+
+sequence_lengthj;
+conv1d_3/
+-)
+
+batch_size
+
+sequence_length + 4j6
+slice_6+
+)%
+
+batch_size
+
+sequence_lengthj5
+relu_3+
+)%
+
+batch_size
+
+sequence_lengthj;
+conv1d_4/
+-)
+
+batch_size
+
+sequence_length + 4j6
+slice_8+
+)%
+
+batch_size
+
+sequence_lengthj5
+relu_4+
+)%
+
+batch_size
+
+sequence_lengthj5
+add_93+
+)%
+
+batch_size
+
+sequence_lengthj5
+relu_5+
+)%
+
+batch_size
+
+sequence_lengthj;
+conv1d_5/
+-)
+
+batch_size
+
+sequence_length + 8j7
+slice_10+
+)%
+
+batch_size
+
+sequence_lengthj5
+relu_6+
+)%
+
+batch_size
+
+sequence_lengthj;
+conv1d_6/
+-)
+
+batch_size
+
+sequence_length + 8j7
+slice_12+
+)%
+
+batch_size
+
+sequence_lengthj5
+relu_7+
+)%
+
+batch_size
+
+sequence_lengthj6
+add_142+
+)%
+
+batch_size
+
+sequence_lengthj5
+relu_8+
+)%
+
+batch_size
+
+sequence_lengthj<
+	unsqueeze/
+-)
+
+batch_size
+
+
+sequence_lengthj(
+mean 
+
+
+batch_size
+
+
+j'
+squeeze
+
+
+batch_size
+
+j%
+	squeeze_1
+
+
+batch_size
+Ç‹
+0pkg.torch.export.ExportedProgram.graph_signatureß
+# inputs
+p_tcn_0_net_0_conv_weight: PARAMETER target='tcn.0.net.0.conv.weight'
+p_tcn_0_net_0_conv_bias: PARAMETER target='tcn.0.net.0.conv.bias'
+p_tcn_0_net_3_conv_weight: PARAMETER target='tcn.0.net.3.conv.weight'
+p_tcn_0_net_3_conv_bias: PARAMETER target='tcn.0.net.3.conv.bias'
+p_tcn_0_skip_weight: PARAMETER target='tcn.0.skip.weight'
+p_tcn_0_skip_bias: PARAMETER target='tcn.0.skip.bias'
+p_tcn_1_net_0_conv_weight: PARAMETER target='tcn.1.net.0.conv.weight'
+p_tcn_1_net_0_conv_bias: PARAMETER target='tcn.1.net.0.conv.bias'
+p_tcn_1_net_3_conv_weight: PARAMETER target='tcn.1.net.3.conv.weight'
+p_tcn_1_net_3_conv_bias: PARAMETER target='tcn.1.net.3.conv.bias'
+p_tcn_2_net_0_conv_weight: PARAMETER target='tcn.2.net.0.conv.weight'
+p_tcn_2_net_0_conv_bias: PARAMETER target='tcn.2.net.0.conv.bias'
+p_tcn_2_net_3_conv_weight: PARAMETER target='tcn.2.net.3.conv.weight'
+p_tcn_2_net_3_conv_bias: PARAMETER target='tcn.2.net.3.conv.bias'
+p_fc_weight: PARAMETER target='fc.weight'
+p_fc_bias: PARAMETER target='fc.bias'
+x: USER_INPUT
+
+# outputs
+linear: USER_OUTPUT
+Ç^
+2pkg.torch.export.ExportedProgram.range_constraints({s77: VR[0, int_oo], s53: VR[0, int_oo]}B
+ 
