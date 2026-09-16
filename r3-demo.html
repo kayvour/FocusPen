@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Pen Grip Simulator — IMU + FSR + Windowed Classifier</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  :root{
+    --bg:#0b0d12; --panel:#12151c; --panel2:#171b24; --border:#242a36; --text:#e7e9ee; --dim:#8b93a3;
+    --accent:#5eead4; --accent2:#a78bfa;
+    --idle:#64748b; --fidget:#f59e0b; --grip:#f43f5e; --write:#38bdf8;
+    --good:#34d399; --bad:#f87171; --radius:14px;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased;}
+  body{padding:16px;padding-bottom:60px;max-width:720px;margin:0 auto;}
+  h1{font-size:19px;margin:4px 0 2px;font-weight:700;letter-spacing:-0.01em;}
+  .sub{color:var(--dim);font-size:13px;margin-bottom:18px;line-height:1.5;}
+  .card{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:14px;}
+  .card h2{font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:var(--dim);margin:0 0 12px;font-weight:600;
+    display:flex;align-items:center;justify-content:space-between;}
+  .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
+  .btn{appearance:none;border:1px solid var(--border);background:var(--panel2);color:var(--text);
+    padding:11px 16px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;transition:transform .08s;}
+  .btn:active{transform:scale(0.97);}
+  .btn.primary{background:linear-gradient(135deg,var(--accent),#3fd6c2);color:#04211d;border:none;}
+  .btn.small{padding:7px 12px;font-size:12.5px;}
+  .btn:disabled{opacity:.4;cursor:not-allowed;}
+  .btn.wide{width:100%;padding:14px;font-size:15px;}
+  input[type=number], input[type=text]{background:var(--panel2);border:1px solid var(--border);color:var(--text);
+    padding:8px 10px;border-radius:8px;font-size:13px;font-weight:600;width:80px;}
+  input[type=range]{width:100%;accent-color:var(--accent);}
+  textarea{width:100%;background:#0d1017;border:1px solid var(--border);color:#c9f7ee;font-family:ui-monospace,Menlo,monospace;
+    font-size:12.5px;border-radius:10px;padding:12px;min-height:150px;line-height:1.5;resize:vertical;}
+  label.f{font-size:12px;color:var(--dim);font-weight:600;display:block;margin-bottom:4px;}
+  .field{display:flex;flex-direction:column;gap:2px;}
+  .status-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--bad);margin-right:6px;vertical-align:middle;}
+  .status-dot.on{background:var(--good);box-shadow:0 0 6px var(--good);}
+  .statline{font-size:13px;color:var(--dim);display:flex;align-items:center;margin-bottom:2px;}
+  .axis-tabs{display:flex;gap:6px;margin-bottom:8px;}
+  .axis-tab{flex:1;border:1.5px solid var(--border);background:var(--panel2);color:var(--dim);
+    padding:7px 4px;border-radius:9px;font-size:12px;font-weight:700;text-align:center;cursor:pointer;transition:all .12s;}
+  .axis-tab.active{border-color:var(--accent);color:var(--bg);background:var(--accent);}
+  .chart-label{font-size:11px;color:var(--dim);text-transform:uppercase;letter-spacing:.05em;font-weight:700;margin:4px 0 6px;}
+  canvas{width:100% !important;max-height:130px;}
+
+  /* --- Pen visual --- */
+  .pen-stage{position:relative;height:190px;display:flex;align-items:center;justify-content:center;}
+  .pen-svg{filter:drop-shadow(0 6px 14px rgba(0,0,0,.5));}
+  .pen-caption{position:absolute;bottom:0;left:0;right:0;text-align:center;font-size:12px;color:var(--dim);}
+
+  /* --- accumulation / cooldown bars --- */
+  .accum-label{font-size:11px;color:var(--dim);display:flex;justify-content:space-between;margin-top:10px;margin-bottom:4px;}
+  .accum-label b{color:var(--text);}
+
+  /* --- live classification feed --- */
+  .term{background:#0d1017;border:1px solid var(--border);border-radius:10px;padding:12px 14px;
+    font-family:ui-monospace,Menlo,monospace;font-size:19px;letter-spacing:5px;line-height:1.4;
+    height:38px;overflow-x:auto;overflow-y:hidden;white-space:nowrap;}
+  .term::-webkit-scrollbar{display:none;}
+  .term span.buzz{font-size:12px;letter-spacing:0;font-weight:800;color:var(--bad);margin:0 4px;
+    background:#3a1220;padding:2px 6px;border-radius:6px;}
+  .feed-legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:10px;font-size:11px;color:var(--dim);}
+  .feed-legend span{display:inline-flex;align-items:center;gap:5px;}
+  .feed-legend i{width:9px;height:9px;border-radius:50%;display:inline-block;}
+
+  /* --- toggle switch --- */
+  .switch{position:relative;width:44px;height:24px;background:var(--panel2);border:1px solid var(--border);
+    border-radius:14px;cursor:pointer;flex-shrink:0;}
+  .switch .knob{position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:var(--dim);transition:all .15s;}
+  .switch.on{background:#123a34;border-color:var(--accent);}
+  .switch.on .knob{left:22px;background:var(--accent);}
+  .switch-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 0;
+    border-bottom:1px solid var(--border);}
+  .switch-row:last-child{border-bottom:none;}
+  .switch-row .lbl{font-size:13.5px;font-weight:600;}
+  .switch-row .hint{font-size:11px;color:var(--dim);margin-top:2px;}
+
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;}
+  .mini-stat{background:var(--panel2);border-radius:10px;padding:8px 10px;text-align:center;}
+  .mini-stat .l{font-size:9.5px;color:var(--dim);text-transform:uppercase;letter-spacing:.04em;}
+  .mini-stat .v{font-size:14px;font-weight:800;font-variant-numeric:tabular-nums;margin-top:2px;}
+
+  .predict-badge{display:flex;align-items:center;justify-content:center;gap:10px;padding:20px;border-radius:12px;
+    background:var(--panel2);margin-bottom:12px;}
+  .predict-badge .dot{width:14px;height:14px;border-radius:50%;}
+  .predict-badge .lab{font-size:22px;font-weight:800;}
+  .predict-badge .conf{font-size:12px;color:var(--dim);}
+
+  .progress{height:6px;background:var(--panel2);border-radius:3px;overflow:hidden;margin:8px 0;}
+  .progress-bar{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));width:0%;transition:width .1s linear;}
+
+  .note{font-size:12px;color:var(--dim);line-height:1.5;margin-top:10px;padding:10px 12px;
+    background:var(--panel2);border-radius:10px;border-left:3px solid var(--accent2);}
+  .code-actions{display:flex;gap:8px;margin-top:8px;}
+  .pill{display:inline-block;font-size:10px;font-weight:800;padding:3px 8px;border-radius:20px;letter-spacing:.03em;}
+  .pill-idle{background:#64748b30;color:#94a3b8;} .pill-fidget{background:#f59e0b30;color:#fbbf24;}
+  .pill-grip{background:#f43f5e30;color:#fb7185;} .pill-write{background:#38bdf830;color:#7dd3fc;}
+  .log-item{font-size:11.5px;color:var(--dim);padding:6px 0;border-bottom:1px solid var(--border);
+    display:flex;justify-content:space-between;}
+  .log-item:last-child{border-bottom:none;}
+  details summary{cursor:pointer;font-size:12.5px;color:var(--accent2);font-weight:700;margin-bottom:8px;}
+  footer{text-align:center;color:var(--dim);font-size:11px;margin-top:24px;}
+</style>
+</head>
+<body>
+
+<h1>✒️ Pen Grip Simulator</h1>
+<div class="sub">Orientation-aware pen visual + IMU + simulated FSR, fed through a configurable sliding window into a classifier, with threshold-based haptic feedback. All on-device.</div>
+
+<!-- SENSOR ACCESS -->
+<div class="card">
+  <h2>Sensor Access</h2>
+  <div class="statline"><span id="dot" class="status-dot"></span><span id="statusText">Not active</span></div>
+  <button class="btn primary wide" id="enableBtn" style="margin-top:8px;">Enable Motion + Orientation</button>
+</div>
+
+<!-- PEN VISUAL -->
+<div class="card">
+  <h2>Pen</h2>
+  <div class="pen-stage">
+    <svg class="pen-svg" width="60" height="180" viewBox="0 0 60 180">
+      <polygon points="30,0 45,35 15,35" fill="#f59e0b"/>
+      <rect x="15" y="35" width="30" height="120" rx="6" fill="#1e293b" stroke="#334155" stroke-width="2"/>
+      <rect x="15" y="150" width="30" height="14" rx="4" fill="#0f172a"/>
+      <circle cx="30" cy="17" r="4" fill="#fde68a"/>
+    </svg>
+    <div class="pen-caption">Tip points up — fixed reference so the shape reads clearly</div>
+  </div>
+</div>
+
+<!-- FSR SIM -->
+<div class="card">
+  <h2>Grip Pressure (simulated FSR) <span class="pill pill-write" id="fsrModePill">On</span></h2>
+  <div class="switch-row">
+    <div><div class="lbl">FSR sensor</div>
+      <div class="hint">Turn off to ignore grip pressure entirely — reading holds at idle baseline, slider locks, and Gripping mode can't fire.</div></div>
+    <div class="switch on" id="fsrEnableSwitch"><div class="knob"></div></div>
+  </div>
+  <div class="note" style="margin-top:10px;margin-bottom:10px;">Calibrated to your sensor's real range: ~92 idle baseline, 105–115 while writing, 115–130 counts as gripping. No real pressure sensor exists on this phone, so drag the slider to simulate a reading.</div>
+  <label class="f">FSR reading: <span id="fsrManualVal">92</span></label>
+  <input type="range" id="fsrManualSlider" min="80" max="130" value="92">
+  <div class="row" style="font-size:10px;color:var(--dim);justify-content:space-between;margin-top:2px;">
+    <span>80</span><span>92 idle</span><span>105–115 writing</span><span>115–130 gripping</span><span>130</span>
+  </div>
+  <div class="progress" style="height:10px;margin-top:10px;"><div class="progress-bar" id="fsrBar" style="background:linear-gradient(90deg,#34d399,#fbbf24,#f43f5e);"></div></div>
+</div>
+
+<!-- LIVE GRAPHS -->
+<div class="card">
+  <h2>Live Sensor Streams</h2>
+  <div class="chart-label">Accelerometer</div>
+  <div class="axis-tabs" id="accelAxisTabs">
+    <div class="axis-tab active" data-axis="all">All 3</div>
+    <div class="axis-tab" data-axis="x">X</div>
+    <div class="axis-tab" data-axis="y">Y</div>
+    <div class="axis-tab" data-axis="z">Z</div>
+  </div>
+  <canvas id="accelChart"></canvas>
+
+  <div class="chart-label" style="margin-top:14px;">Gyroscope</div>
+  <div class="axis-tabs" id="gyroAxisTabs">
+    <div class="axis-tab active" data-axis="all">All 3</div>
+    <div class="axis-tab" data-axis="x">α</div>
+    <div class="axis-tab" data-axis="y">β</div>
+    <div class="axis-tab" data-axis="z">γ</div>
+  </div>
+  <canvas id="gyroChart"></canvas>
+
+  <div class="chart-label" style="margin-top:14px;">FSR (simulated)</div>
+  <canvas id="fsrChart"></canvas>
+</div>
+
+<!-- WINDOWING -->
+<div class="card">
+  <h2>Windowing / Feature Extraction</h2>
+  <div class="grid2">
+    <div class="field"><label class="f">Window length (s)</label><input type="number" id="winLen" value="2" min="0.5" step="0.5"></div>
+    <div class="field"><label class="f">Overlap (%)</label><input type="number" id="winOverlap" value="50" min="0" max="90" step="5"></div>
+  </div>
+  <div class="note" id="hopNote">Hop = 1.0s → a new window is classified every 1.0s, each covering the previous 2.0s of samples.</div>
+  <div class="progress"><div class="progress-bar" id="winProgress"></div></div>
+  <div class="grid3">
+    <div class="mini-stat"><div class="l">Buffer</div><div class="v" id="bufCount">0</div></div>
+    <div class="mini-stat"><div class="l">Windows run</div><div class="v" id="winCount">0</div></div>
+    <div class="mini-stat"><div class="l">Rate</div><div class="v" id="sampleRate">0 Hz</div></div>
+  </div>
+</div>
+
+<!-- CLASSIFIER -->
+<div class="card">
+  <h2>Classifier <span class="pill pill-write" id="modelStatusPill">Rule-based (default)</span></h2>
+  <div class="predict-badge">
+    <div class="dot" id="predDot" style="background:var(--idle);"></div>
+    <div>
+      <div class="lab" id="predLabel">Idle</div>
+      <div class="conf" id="predConf">confidence: –</div>
+    </div>
+  </div>
+  <div class="grid3" style="margin-bottom:10px;">
+    <div class="mini-stat"><div class="l">Accel Energy</div><div class="v" id="f-accelE">0</div></div>
+    <div class="mini-stat"><div class="l">Gyro Energy</div><div class="v" id="f-gyroE">0</div></div>
+    <div class="mini-stat"><div class="l">ZCR</div><div class="v" id="f-zcr">0</div></div>
+  </div>
+  <label class="f">classify(features) → returns 'Idle' | 'Fidgeting' | 'Gripping' | 'Writing'</label>
+  <textarea id="modelCode" spellcheck="false"></textarea>
+  <div class="code-actions">
+    <button class="btn primary small" id="applyModelBtn">Apply Model</button>
+    <button class="btn small" id="resetModelBtn">Reset to Default</button>
+  </div>
+  <details style="margin-top:12px;">
+    <summary>Advanced: load a TensorFlow.js model instead</summary>
+    <div class="row">
+      <input type="text" id="tfjsUrl" placeholder="https://.../model.json" style="flex:1;min-width:180px;width:auto;">
+      <button class="btn small" id="loadTfjsBtn">Load</button>
+    </div>
+    <div class="note">If loaded, the model receives the same feature vector as a flat tensor (order shown below the feature table) and its argmax over 4 outputs (Idle, Fidgeting, Gripping, Writing) is used instead of the JS function above. Falls back to the JS classifier if loading fails.</div>
+  </details>
+  <details style="margin-top:10px;">
+    <summary>Advanced: load an ONNX TCN model instead (raw sequence input)</summary>
+    <div class="row">
+      <input type="text" id="onnxUrl" placeholder="https://.../model.onnx" style="flex:1;min-width:180px;width:auto;">
+      <button class="btn small" id="loadOnnxBtn">Load from URL</button>
+    </div>
+    <div class="row" style="margin-top:8px;">
+      <input type="file" id="onnxFile" accept=".onnx" style="flex:1;min-width:180px;width:auto;">
+      <button class="btn small" id="loadOnnxFileBtn">Load file</button>
+    </div>
+    <div class="grid2" style="margin-top:8px;">
+      <div class="field"><label class="f">Sequence length (samples)</label><input type="number" id="onnxSeqLen" value="30" min="10" step="1"></div>
+      <div class="field"><label class="f">Input tensor name</label><input type="text" id="onnxInputName" value="input" style="width:100%;"></div>
+    </div>
+    <div class="note">This model takes the <b>raw windowed time series</b> — not the aggregated feature vector above — resampled to the sequence length as a <code>[1, 6, seq_len]</code> tensor in channel order <b>ax, ay, az, gx, gy, gz</b> (matches a TCN's dilated causal convolutions). Its argmax over 4 outputs (Idle, Fidgeting, Gripping, Writing) is used, with softmax as the confidence readout. Takes priority over the TFJS/JS classifiers above when loaded; falls back to them if loading or inference fails.</div>
+  </details>
+</div>
+
+<!-- LIVE CLASSIFICATION FEED -->
+<div class="card">
+  <h2>Live Classification Feed</h2>
+  <div class="term" id="classFeed"></div>
+  <div class="feed-legend">
+    <span><i style="background:var(--idle);"></i>I = Idle</span>
+    <span><i style="background:var(--fidget);"></i>F = Fidgeting</span>
+    <span><i style="background:var(--grip);"></i>G = Gripping</span>
+    <span><i style="background:var(--write);"></i>W = Writing</span>
+    <span style="color:var(--bad);font-weight:700;">BUZZ = haptic fired</span>
+  </div>
+</div>
+
+<!-- BEHAVIOR MONITOR & HAPTICS -->
+<div class="card">
+  <h2>Behavior Monitor & Haptics</h2>
+
+  <div class="switch-row">
+    <div><div class="lbl">Haptic feedback</div><div class="hint">Master on/off for all buzz triggers</div></div>
+    <div class="switch on" id="hapticMasterSwitch"><div class="knob"></div></div>
+  </div>
+
+  <div class="field" style="margin-top:10px;">
+    <label class="f">Global cooldown between buzzes (s)</label>
+    <input type="number" id="cooldownInput" value="5" min="0" step="0.5">
+  </div>
+  <div class="accum-label"><span>Cooldown status</span><b id="cooldownText">Ready</b></div>
+  <div class="progress"><div class="progress-bar" id="cooldownBar" style="background:linear-gradient(90deg,var(--accent2),var(--accent));"></div></div>
+
+  <hr style="border-color:var(--border);margin:14px 0;">
+
+  <div class="switch-row">
+    <div><div class="lbl">Idle monitor <span class="pill pill-idle">sharp</span></div>
+      <div class="hint">Buzz if idle continuously ≥ threshold</div></div>
+    <div class="switch on" id="idleSwitch"><div class="knob"></div></div>
+  </div>
+  <div class="field" style="margin:8px 0;"><label class="f">Idle threshold (s)</label><input type="number" id="idleThreshold" value="10" min="1" step="1"></div>
+  <div class="field"><label class="f">Idle haptic pattern (ms, comma-sep — sharp = short & punchy)</label>
+    <input type="text" id="idlePattern" value="15" style="width:100%;"></div>
+
+  <hr style="border-color:var(--border);margin:14px 0;">
+
+  <div class="switch-row">
+    <div><div class="lbl">Fidgeting monitor <span class="pill pill-fidget">gentle</span></div>
+      <div class="hint">Buzz if fidgeting continuously ≥ threshold</div></div>
+    <div class="switch on" id="fidgetSwitch"><div class="knob"></div></div>
+  </div>
+  <div class="field" style="margin:8px 0;"><label class="f">Fidget threshold (s)</label><input type="number" id="fidgetThreshold" value="4" min="1" step="1"></div>
+  <div class="field"><label class="f">Fidget haptic pattern (ms — gentle = soft flutter)</label>
+    <input type="text" id="fidgetPattern" value="18,25,18" style="width:100%;"></div>
+
+  <hr style="border-color:var(--border);margin:14px 0;">
+
+  <div class="switch-row">
+    <div><div class="lbl">Gripping mode <span class="pill pill-grip">firm</span></div>
+      <div class="hint">Buzz when simulated FSR crosses threshold while enabled</div></div>
+    <div class="switch" id="gripSwitch"><div class="knob"></div></div>
+  </div>
+  <div class="field" style="margin:8px 0;"><label class="f">Grip pressure threshold</label><input type="number" id="gripThreshold" value="115" min="80" max="130" step="1"></div>
+  <div class="field"><label class="f">Grip haptic pattern (ms — firm & sustained)</label>
+    <input type="text" id="gripPattern" value="250" style="width:100%;"></div>
+
+  <div class="note">Every trigger — regardless of class — respects the single global cooldown above, so buzzes never stack on top of each other.</div>
+
+  <div style="margin-top:12px;">
+    <div class="chart-label">Trigger log</div>
+    <div id="triggerLog"><div class="log-item"><span>No triggers yet</span></div></div>
+  </div>
+</div>
+
+<footer>Runs 100% client-side. No sensor data ever leaves the phone.</footer>
+
+<script>
+/* ================= SENSOR ACCESS ================= */
+let sensorsActive = false;
+let latestAccel = {x:0,y:0,z:0};
+let latestGyro = {x:0,y:0,z:0};
+
+document.getElementById('enableBtn').addEventListener('click', async ()=>{
+  try{
+    const needsMotionPerm = typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function';
+    if(needsMotionPerm){
+      const r = await DeviceMotionEvent.requestPermission();
+      if(r !== 'granted'){ setStatus(false,'Motion permission denied.'); return; }
+    }
+    window.addEventListener('devicemotion', handleMotion);
+    sensorsActive = true;
+    setStatus(true, 'Live');
+    document.getElementById('enableBtn').textContent = 'Sensors Active ✓';
+    document.getElementById('enableBtn').disabled = true;
+  }catch(err){ setStatus(false, 'Error: '+err.message); }
+});
+function setStatus(on,text){
+  document.getElementById('dot').classList.toggle('on',on);
+  document.getElementById('statusText').textContent = text;
+}
+
+/* ================= FSR SIMULATION (manual only, calibrated 80–130 range) ================= */
+const FSR_MIN = 80, FSR_MAX = 130, FSR_IDLE_BASELINE = 92;
+let fsrValue = FSR_IDLE_BASELINE;
+let fsrEnabled = true;
+function fsrBarPct(v){ return Math.max(0, Math.min(100, ((v-FSR_MIN)/(FSR_MAX-FSR_MIN))*100)); }
+document.getElementById('fsrManualSlider').addEventListener('input', e=>{
+  if(!fsrEnabled) return;
+  fsrValue = parseInt(e.target.value,10);
+  document.getElementById('fsrManualVal').textContent = fsrValue;
+  document.getElementById('fsrBar').style.width = fsrBarPct(fsrValue)+'%';
+});
+document.getElementById('fsrEnableSwitch').addEventListener('click', function(){
+  // runs after the generic .switch click handler below has already toggled the 'on' class
+  setTimeout(()=>{
+    fsrEnabled = this.classList.contains('on');
+    const slider = document.getElementById('fsrManualSlider');
+    slider.disabled = !fsrEnabled;
+    document.getElementById('fsrModePill').textContent = fsrEnabled ? 'On' : 'Off';
+    document.getElementById('fsrModePill').className = fsrEnabled ? 'pill pill-write' : 'pill pill-idle';
+    if(!fsrEnabled){
+      fsrValue = FSR_IDLE_BASELINE;
+      slider.value = FSR_IDLE_BASELINE;
+      document.getElementById('fsrManualVal').textContent = fsrValue;
+      document.getElementById('fsrBar').style.width = fsrBarPct(fsrValue)+'%';
+    }
+  }, 0);
+});
+function computeFsr(){
+  document.getElementById('fsrBar').style.width = fsrBarPct(fsrValue)+'%';
+  return fsrValue;
+}
+
+/* ================= ROLLING RAW BUFFER (for windowing) ================= */
+let rawBuffer = []; // {t, ax,ay,az,gx,gy,gz,fsr}
+let sampleTimestamps = [];
+
+function handleMotion(e){
+  const acc = e.acceleration && e.acceleration.x!==null ? e.acceleration : e.accelerationIncludingGravity;
+  const rot = e.rotationRate || {alpha:0,beta:0,gamma:0};
+  latestAccel = {x: acc?.x ?? 0, y: acc?.y ?? 0, z: acc?.z ?? 0};
+  latestGyro  = {x: rot?.alpha ?? 0, y: rot?.beta ?? 0, z: rot?.gamma ?? 0};
+
+  const fsr = computeFsr();
+  const now = performance.now();
+
+  rawBuffer.push({t:now, ax:latestAccel.x, ay:latestAccel.y, az:latestAccel.z,
+                   gx:latestGyro.x, gy:latestGyro.y, gz:latestGyro.z, fsr});
+  sampleTimestamps.push(now);
+  // trim buffer beyond max window we might ever need (keep last 40s)
+  const cutoff = now - 40000;
+  while(rawBuffer.length && rawBuffer[0].t < cutoff) rawBuffer.shift();
+
+  updateLiveCharts(now);
+}
+
+/* ================= LIVE CHARTS ================= */
+const MAXPTS = 150;
+const accelBuf = {x:[],y:[],z:[]}, gyroBuf = {x:[],y:[],z:[]}, fsrBuf = [];
+const timeBuf = [];
+let accelAxis='all', gyroAxis='all';
+
+function commonOpts(){ return {
+  responsive:true, animation:false, interaction:{intersect:false},
+  scales:{x:{display:false}, y:{ticks:{color:'#8b93a3',font:{size:9}},grid:{color:'#242a36'}}},
+  plugins:{legend:{labels:{color:'#e7e9ee',boxWidth:10,font:{size:10}}}},
+  elements:{point:{radius:0},line:{tension:0.25,borderWidth:1.5}}
+};}
+const accelChart = new Chart(document.getElementById('accelChart'), {type:'line',
+  data:{labels:[],datasets:[{label:'X',data:[],borderColor:'#5eead4'},{label:'Y',data:[],borderColor:'#a78bfa'},{label:'Z',data:[],borderColor:'#f472b6'}]},
+  options:commonOpts()});
+const gyroChart = new Chart(document.getElementById('gyroChart'), {type:'line',
+  data:{labels:[],datasets:[{label:'α',data:[],borderColor:'#38bdf8'},{label:'β',data:[],borderColor:'#fbbf24'},{label:'γ',data:[],borderColor:'#fb7185'}]},
+  options:commonOpts()});
+const fsrChart = new Chart(document.getElementById('fsrChart'), {type:'line',
+  data:{labels:[],datasets:[{label:'FSR',data:[],borderColor:'#f43f5e',fill:true,backgroundColor:'rgba(244,63,94,0.12)'}]},
+  options:commonOpts()});
+
+function applyAxisVisibility(chart, sel){
+  const idx={x:0,y:1,z:2};
+  chart.data.datasets.forEach((ds,i)=>{ ds.hidden = (sel!=='all') && (i!==idx[sel]); });
+}
+function setupAxisTabs(containerId, onChange){
+  document.getElementById(containerId).querySelectorAll('.axis-tab').forEach(tab=>{
+    tab.addEventListener('click', ()=>{
+      document.getElementById(containerId).querySelectorAll('.axis-tab').forEach(t=>t.classList.remove('active'));
+      tab.classList.add('active'); onChange(tab.dataset.axis);
+    });
+  });
+}
+setupAxisTabs('accelAxisTabs', a=>{accelAxis=a; applyAxisVisibility(accelChart,accelAxis); accelChart.update('none');});
+setupAxisTabs('gyroAxisTabs', a=>{gyroAxis=a; applyAxisVisibility(gyroChart,gyroAxis); gyroChart.update('none');});
+
+let lastChartUpdate = 0, sampleCountWindow = 0, lastRateCalc = performance.now();
+function updateLiveCharts(now){
+  sampleCountWindow++;
+  if(now - lastRateCalc > 1000){
+    document.getElementById('sampleRate').textContent = sampleCountWindow+' Hz';
+    sampleCountWindow = 0; lastRateCalc = now;
+  }
+  if(now - lastChartUpdate < 66) return;
+  lastChartUpdate = now;
+  timeBuf.push('');
+  accelBuf.x.push(latestAccel.x); accelBuf.y.push(latestAccel.y); accelBuf.z.push(latestAccel.z);
+  gyroBuf.x.push(latestGyro.x); gyroBuf.y.push(latestGyro.y); gyroBuf.z.push(latestGyro.z);
+  fsrBuf.push(fsrValue);
+  if(timeBuf.length>MAXPTS){
+    timeBuf.shift(); accelBuf.x.shift();accelBuf.y.shift();accelBuf.z.shift();
+    gyroBuf.x.shift();gyroBuf.y.shift();gyroBuf.z.shift(); fsrBuf.shift();
+  }
+  accelChart.data.labels=timeBuf; accelChart.data.datasets[0].data=accelBuf.x;
+  accelChart.data.datasets[1].data=accelBuf.y; accelChart.data.datasets[2].data=accelBuf.z;
+  applyAxisVisibility(accelChart,accelAxis); accelChart.update('none');
+
+  gyroChart.data.labels=timeBuf; gyroChart.data.datasets[0].data=gyroBuf.x;
+  gyroChart.data.datasets[1].data=gyroBuf.y; gyroChart.data.datasets[2].data=gyroBuf.z;
+  applyAxisVisibility(gyroChart,gyroAxis); gyroChart.update('none');
+
+  fsrChart.data.labels=timeBuf; fsrChart.data.datasets[0].data=fsrBuf; fsrChart.update('none');
+  document.getElementById('bufCount').textContent = rawBuffer.length;
+}
+
+/* ================= WINDOWING ================= */
+let winLenSec = 2, overlapPct = 50, hopSec = 1;
+let windowsRun = 0;
+let lastWindowTime = performance.now();
+
+function readWinConfig(){
+  winLenSec = Math.max(0.5, parseFloat(document.getElementById('winLen').value)||2);
+  overlapPct = Math.min(90, Math.max(0, parseFloat(document.getElementById('winOverlap').value)||0));
+  hopSec = winLenSec * (1 - overlapPct/100);
+  document.getElementById('hopNote').textContent =
+    `Hop = ${hopSec.toFixed(2)}s → a new window is classified every ${hopSec.toFixed(2)}s, each covering the previous ${winLenSec.toFixed(2)}s of samples.`;
+}
+document.getElementById('winLen').addEventListener('change', readWinConfig);
+document.getElementById('winOverlap').addEventListener('change', readWinConfig);
+readWinConfig();
+
+/* ================= FEATURE EXTRACTION ================= */
+function extractFeatures(samples){
+  if(samples.length===0){
+    return {accelEnergy:0,accelStd:0,gyroEnergy:0,gyroStd:0,fsrMean:0,fsrMax:0,zcr:0,n:0};
+  }
+  const ax=samples.map(s=>s.ax), ay=samples.map(s=>s.ay), az=samples.map(s=>s.az);
+  const gx=samples.map(s=>s.gx), gy=samples.map(s=>s.gy), gz=samples.map(s=>s.gz);
+  const fsrs=samples.map(s=>s.fsr);
+  const mean = arr=>arr.reduce((a,b)=>a+b,0)/arr.length;
+  const std = arr=>{const m=mean(arr); return Math.sqrt(mean(arr.map(v=>(v-m)**2)));};
+  const mags = samples.map(s=>Math.sqrt(s.ax**2+s.ay**2+s.az**2));
+  const gmags = samples.map(s=>Math.sqrt(s.gx**2+s.gy**2+s.gz**2));
+  const accelEnergy = mean(mags.map(v=>v*v));
+  const gyroEnergy = mean(gmags.map(v=>v*v));
+  const accelStd = (std(ax)+std(ay)+std(az))/3;
+  const gyroStd = (std(gx)+std(gy)+std(gz))/3;
+  // zero crossing rate of accel magnitude around its mean -> proxy for "fidgety" oscillation
+  const mMean = mean(mags);
+  let zc=0;
+  for(let i=1;i<mags.length;i++){
+    if((mags[i-1]-mMean)*(mags[i]-mMean) < 0) zc++;
+  }
+  const zcr = zc / (samples.length/50); // normalize roughly to per-second-ish
+  return {
+    accelEnergy:+accelEnergy.toFixed(3), accelStd:+accelStd.toFixed(3),
+    gyroEnergy:+gyroEnergy.toFixed(2), gyroStd:+gyroStd.toFixed(2),
+    fsrMean:+mean(fsrs).toFixed(1), fsrMax:+Math.max(...fsrs).toFixed(1),
+    zcr:+zcr.toFixed(2), n:samples.length
+  };
+}
+
+/* ================= CLASSIFIER (editable JS) ================= */
+const DEFAULT_MODEL_CODE =
+`// f = {accelEnergy, accelStd, gyroEnergy, gyroStd, fsrMean, fsrMax, zcr, n}
+// Return one of: 'Idle' | 'Fidgeting' | 'Gripping' | 'Writing'
+// FSR calibrated to this sensor: ~92 idle, 105-115 writing, 115-130 gripping.
+
+if (f.zcr > 6 && f.accelStd > 0.25) return 'Fidgeting';
+
+if (f.fsrMean >= 115) return 'Gripping';
+
+if (f.fsrMean >= 105) return 'Writing';
+
+return 'Idle';`;
+
+let classifyFn = new Function('f', DEFAULT_MODEL_CODE);
+document.getElementById('modelCode').value = DEFAULT_MODEL_CODE;
+
+document.getElementById('applyModelBtn').addEventListener('click', ()=>{
+  try{
+    const code = document.getElementById('modelCode').value;
+    const fn = new Function('f', code);
+    fn({accelEnergy:0,accelStd:0,gyroEnergy:0,gyroStd:0,fsrMean:0,fsrMax:0,zcr:0,n:0}); // smoke test
+    classifyFn = fn;
+    tfModel = null;
+    onnxSession = null;
+    document.getElementById('modelStatusPill').textContent = 'Custom JS active';
+    document.getElementById('modelStatusPill').className = 'pill pill-write';
+  }catch(err){
+    alert('Model error: '+err.message);
+  }
+});
+document.getElementById('resetModelBtn').addEventListener('click', ()=>{
+  document.getElementById('modelCode').value = DEFAULT_MODEL_CODE;
+  classifyFn = new Function('f', DEFAULT_MODEL_CODE);
+  tfModel = null;
+  onnxSession = null;
+  document.getElementById('modelStatusPill').textContent = 'Rule-based (default)';
+  document.getElementById('modelStatusPill').className = 'pill pill-write';
+});
+
+/* Optional TFJS model */
+let tfModel = null;
+document.getElementById('loadTfjsBtn').addEventListener('click', async ()=>{
+  const url = document.getElementById('tfjsUrl').value.trim();
+  if(!url) return;
+  try{
+    if(typeof tf === 'undefined'){
+      await new Promise((res,rej)=>{
+        const s = document.createElement('script');
+        s.src = 'https://cdnjs.cloudflare.com/ajax/libs/tensorflow/4.20.0/tf.min.js';
+        s.onload = res; s.onerror = rej;
+        document.head.appendChild(s);
+      });
+    }
+    tfModel = await tf.loadLayersModel(url);
+    onnxSession = null;
+    document.getElementById('modelStatusPill').textContent = 'TFJS model active';
+    document.getElementById('modelStatusPill').className = 'pill pill-grip';
+  }catch(err){
+    alert('Could not load model: '+err.message);
+    tfModel = null;
+  }
+});
+const CLASS_ORDER = ['Fidgeting', 'Gripping', 'Idle', 'Writing']; // Alphabetical, matching ONNX export
+
+/* ---- ONNX Runtime Web (raw-sequence TCN) ---- */
+const ORT_CDN_BASE = 'https://cdn.jsdelivr.net/npm/onnxruntime-web@1.19.2/dist/';
+let onnxSession = null;
+const ONNX_CHANNELS = ['ax','ay','az','gx','gy','gz']; // must match export script's channel order
+
+async function ensureOrt(){
+  if(typeof ort !== 'undefined') return;
+  await new Promise((res,rej)=>{
+    const s = document.createElement('script');
+    s.src = ORT_CDN_BASE + 'ort.min.js';
+    s.onload = res; s.onerror = rej;
+    document.head.appendChild(s);
+  });
+  if(ort.env && ort.env.wasm) ort.env.wasm.wasmPaths = ORT_CDN_BASE;
+}
+
+// Linearly resamples a raw window (irregular sample times) onto a fixed-length
+// grid, laid out channel-major ([c0_t0..c0_tN, c1_t0..c1_tN, ...]) to match
+// PyTorch's [1, channels, seq_len] Conv1d input layout.
+function resampleWindow(samples, seqLen, channels){
+  const out = new Float32Array(channels.length * seqLen);
+  const n = samples.length;
+  if(n === 0) return out;
+  const t0 = samples[0].t, t1 = samples[n-1].t;
+  const span = Math.max(1e-6, t1 - t0);
+  for(let ci=0; ci<channels.length; ci++){
+    const key = channels[ci];
+    let lo = 0;
+    for(let i=0; i<seqLen; i++){
+      const targetT = seqLen===1 ? t0 : t0 + (i/(seqLen-1))*span;
+      while(lo < n-2 && samples[lo+1].t < targetT) lo++;
+      const hi = Math.min(lo+1, n-1);
+      const sLo = samples[lo], sHi = samples[hi];
+      const denom = sHi.t - sLo.t;
+      const v = denom === 0 ? sLo[key] : sLo[key] + ((targetT - sLo.t)/denom) * (sHi[key] - sLo[key]);
+      out[ci*seqLen + i] = v;
+    }
+  }
+  return out;
+}
+
+async function loadOnnxSession(sourceOrUrl){
+  await ensureOrt();
+  onnxSession = await ort.InferenceSession.create(sourceOrUrl, {executionProviders:['wasm']});
+  tfModel = null;
+  document.getElementById('modelStatusPill').textContent = 'ONNX (TCN) model active';
+  document.getElementById('modelStatusPill').className = 'pill pill-grip';
+}
+document.getElementById('loadOnnxBtn').addEventListener('click', async ()=>{
+  const url = document.getElementById('onnxUrl').value.trim();
+  if(!url) return;
+  try{ await loadOnnxSession(url); }
+  catch(err){ alert('Could not load ONNX model: '+err.message); onnxSession = null; }
+});
+document.getElementById('loadOnnxFileBtn').addEventListener('click', async ()=>{
+  const file = document.getElementById('onnxFile').files[0];
+  if(!file) return;
+  try{
+    const buf = await file.arrayBuffer();
+    await loadOnnxSession(new Uint8Array(buf));
+  }catch(err){ alert('Could not load ONNX model: '+err.message); onnxSession = null; }
+});
+
+function softmaxArgmax(out){
+  let maxV=-Infinity; for(let i=0;i<out.length;i++) if(out[i]>maxV) maxV=out[i];
+  let sum=0; const exps=new Array(out.length);
+  for(let i=0;i<out.length;i++){ exps[i]=Math.exp(out[i]-maxV); sum+=exps[i]; }
+  let maxI=0; for(let i=1;i<out.length;i++) if(out[i]>out[maxI]) maxI=i;
+  return {maxI, conf: exps[maxI]/sum};
+}
+
+// f = aggregated features (for the JS/TFJS path); samples = raw windowed
+// buffer (for the ONNX TCN path, which wants the actual time series).
+async function runClassifierAsync(f, samples){
+  if(onnxSession){
+    try{
+      const seqLen = Math.max(1, parseInt(document.getElementById('onnxSeqLen').value,10)||30);
+      const inputName = document.getElementById('onnxInputName').value.trim() || 'input';
+      const data = resampleWindow(samples, seqLen, ONNX_CHANNELS);
+      const tensor = new ort.Tensor('float32', data, [1, ONNX_CHANNELS.length, seqLen]);
+      const results = await onnxSession.run({[inputName]: tensor});
+      const out = results[Object.keys(results)[0]].data;
+      const {maxI, conf} = softmaxArgmax(out);
+      return {label: CLASS_ORDER[maxI]||'Writing', conf};
+    }catch(err){ /* fall through to TFJS/JS classifier */ }
+  }
+  if(tfModel){
+    try{
+      const vec = [f.accelEnergy,f.accelStd,f.gyroEnergy,f.gyroStd,f.fsrMean,f.fsrMax,f.zcr];
+      const out = tf.tidy(()=> tfModel.predict(tf.tensor2d([vec])).dataSync());
+      let maxI=0; for(let i=1;i<out.length;i++) if(out[i]>out[maxI]) maxI=i;
+      return {label: CLASS_ORDER[maxI]||'Writing', conf: out[maxI]};
+    }catch(err){ /* fall through to JS classifier */ }
+  }
+  try{
+    const label = classifyFn(f);
+    return {label: label || 'Writing', conf: null};
+  }catch(err){
+    return {label:'Writing', conf:null};
+  }
+}
+
+/* ================= STATE MACHINE / MONITOR ================= */
+const classColors = {Idle:'var(--idle)', Fidgeting:'var(--fidget)', Gripping:'var(--grip)', Writing:'var(--write)'};
+let currentLabel = 'Idle';
+let streakLabel = 'Idle';
+let streakStart = performance.now();
+let lastTriggerTime = -99999;
+
+function getSwitchState(id){ return document.getElementById(id).classList.contains('on'); }
+document.querySelectorAll('.switch').forEach(sw=>{
+  sw.addEventListener('click', ()=> sw.classList.toggle('on'));
+});
+
+function vibrate(patternStr){
+  if(!('vibrate' in navigator)) return;
+  const pattern = patternStr.split(',').map(s=>parseInt(s.trim(),10)).filter(n=>!isNaN(n));
+  navigator.vibrate(pattern.length===1?pattern[0]:pattern);
+}
+function logTrigger(label){
+  const el = document.getElementById('triggerLog');
+  if(el.children.length===1 && el.children[0].textContent.includes('No triggers')) el.innerHTML='';
+  const item = document.createElement('div');
+  item.className='log-item';
+  const t = new Date().toLocaleTimeString();
+  item.innerHTML = `<span>${label} buzz</span><span>${t}</span>`;
+  el.prepend(item);
+  while(el.children.length>6) el.removeChild(el.lastChild);
+  appendFeed(' BUZZ ', null, true);
+}
+
+function maybeTrigger(label, now){
+  if(!getSwitchState('hapticMasterSwitch')) return;
+  const cooldown = Math.max(0, parseFloat(document.getElementById('cooldownInput').value)||0)*1000;
+  if(now - lastTriggerTime < cooldown) return;
+
+  const streakDur = (now - streakStart)/1000;
+
+  if(label==='Idle' && getSwitchState('idleSwitch')){
+    const thresh = parseFloat(document.getElementById('idleThreshold').value)||10;
+    if(streakDur >= thresh){
+      vibrate(document.getElementById('idlePattern').value);
+      lastTriggerTime = now; logTrigger('Idle');
+    }
+  } else if(label==='Fidgeting' && getSwitchState('fidgetSwitch')){
+    const thresh = parseFloat(document.getElementById('fidgetThreshold').value)||4;
+    if(streakDur >= thresh){
+      vibrate(document.getElementById('fidgetPattern').value);
+      lastTriggerTime = now; logTrigger('Fidgeting');
+    }
+  }
+
+  if(fsrEnabled && getSwitchState('gripSwitch')){
+    const gthresh = parseFloat(document.getElementById('gripThreshold').value)||70;
+    if(fsrValue >= gthresh){
+      vibrate(document.getElementById('gripPattern').value);
+      lastTriggerTime = now; logTrigger('Gripping');
+    }
+  }
+}
+
+/* ================= LIVE CLASSIFICATION FEED ================= */
+const letterMap = {Idle:'I', Fidgeting:'F', Gripping:'G', Writing:'W'};
+function appendFeed(text, color, isBuzz){
+  const feed = document.getElementById('classFeed');
+  const span = document.createElement('span');
+  span.textContent = text;
+  if(isBuzz){ span.className = 'buzz'; }
+  else { span.style.color = color; }
+  feed.appendChild(span);
+  while(feed.childNodes.length > 80) feed.removeChild(feed.firstChild);
+  feed.scrollLeft = feed.scrollWidth;
+}
+
+/* ================= COOLDOWN BAR ================= */
+function updateCooldownBar(now){
+  const cooldown = Math.max(0, parseFloat(document.getElementById('cooldownInput').value)||0);
+  const elapsedSinceTrigger = (now - lastTriggerTime)/1000;
+  const remain = Math.max(0, cooldown - elapsedSinceTrigger);
+  const pct = cooldown>0 ? (elapsedSinceTrigger/cooldown)*100 : 100;
+  document.getElementById('cooldownBar').style.width = Math.max(0,Math.min(100,pct))+'%';
+  document.getElementById('cooldownText').textContent = remain>0 ? remain.toFixed(1)+'s' : 'Ready';
+}
+
+/* ================= MAIN WINDOW LOOP ================= */
+let classifying = false; // guards against overlapping async inference calls (ONNX/TFJS)
+function windowLoop(){
+  const now = performance.now();
+  updateCooldownBar(now);
+  readWinConfig();
+  const elapsedSincePrev = (now - lastWindowTime)/1000;
+  document.getElementById('winProgress').style.width = Math.min(100, (elapsedSincePrev/hopSec)*100)+'%';
+
+  if(elapsedSincePrev >= hopSec && !classifying){
+    lastWindowTime = now;
+    const cutoff = now - winLenSec*1000;
+    const samples = rawBuffer.filter(s=>s.t>=cutoff);
+    const f = extractFeatures(samples);
+
+    document.getElementById('f-accelE').textContent = f.accelEnergy;
+    document.getElementById('f-gyroE').textContent = f.gyroEnergy;
+    document.getElementById('f-zcr').textContent = f.zcr;
+
+    classifying = true;
+    runClassifierAsync(f, samples).then(({label, conf})=>{
+      windowsRun++;
+      document.getElementById('winCount').textContent = windowsRun;
+
+      document.getElementById('predLabel').textContent = label;
+      document.getElementById('predDot').style.background = classColors[label]||'var(--idle)';
+      document.getElementById('predConf').textContent = conf!==null ? `confidence: ${(conf*100).toFixed(0)}%` : 'confidence: heuristic';
+      appendFeed(letterMap[label]||'?', classColors[label]);
+
+      if(label !== streakLabel){
+        streakLabel = label;
+        streakStart = now;
+      }
+      currentLabel = label;
+      maybeTrigger(label, now);
+    }).finally(()=>{ classifying = false; });
+  }
+  requestAnimationFrame(windowLoop);
+}
+computeFsr();
+requestAnimationFrame(windowLoop);
+</script>
+</body>
+</html>
